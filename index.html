@@ -1,3 +1,9 @@
+<!--
+    Um dia eu ainda vou refatorar o codigo
+    e usar JS mas por enquanto o REVIEWERTRON8000
+    da pro gasto
+ -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,23 +22,103 @@
         .sl-link {
             color: black;
         }
+
         .badge-primary {
-            background-color: #007bff; /* default bootstrap color*/
+            background-color: #007bff;
+            /* default bootstrap color*/
         }
     </style>
 
     <div class="jumbotron jumbotron-fluid">
         <div class="container">
-            <button id="themeButton" class="float-right btn btn-light"onclick="toggleDarkMode();">AM</button>
+            <button id="themeButton" class="float-right btn btn-light" onclick="toggleDarkMode();">AM</button>
             <h1 class="display-4">🎹 Reviews</h1>
-            <p class="lead">albuns que eu encontrei. <a href="https://twitter.com/lbalvarenga55" target="_blank">eu to
-                    aqui</a></p>
+            <p class="lead">albuns que eu encontrei.<br>
+                eu to <a href="https://twitter.com/lbalvarenga55" target="_blank">aqui</a><br>
+                o site ta <a href="https://github.com/lukeathedev/lukeathedev.github.io" target="_blank">aqui</a>
+            </p>
         </div>
     </div>
+
+    <!-- futureproofing -->
+    <!-- <nav aria-label="...">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Últimas</a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item"><a class="page-link" href="page2.html">2</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Primeiras</a>
+            </li>
+        </ul>
+    </nav> -->
 
     <div class="container-fluid mt-4">
         <div class="row justify-content-center">
 
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/miles_davis_kind_of_blue.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/1weenld61qoidwYuZ1GESA" target="_blank">
+                            <h5 class="card-title">Kind Of Blue <span class="text-muted">por Miles Davis (1959)</span></h5>
+                        </a>
+                        <h6>Jazz</h6>
+                        <h5><span class="badge badge-primary">10/10</span></h5>
+                        <p class="card-text">esse album me deixa com um sorriso no rosto. a unica coisa q as vezes
+                            incomoda eh o stereo tipo a minha orelha direita ja ficou surda com o trompete</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/3NvYPUNu6nwQgN31UnoDbn" target="_blank">
+                                    <b>2.</b> Freddie Freeloader <span class="badge badge-primary">11/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/7q3kkfAVpmcZ8g6JUThi3o" target="_blank">
+                                    <b>1.</b> So What </a> <span class="badge badge-primary">10/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/0TUa7gBg7LJH6B8dkNVioU" target="_blank">
+                                    <b>4.</b> All Blues </a> <span class="badge badge-primary">10/10</span> </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 15 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/intervals_the_shape_of_colour.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/4MYLm8Uxayy4UyqFHPHfBB" target="_blank">
+                            <h5 class="card-title">The Shape of Colour <span class="text-muted">por Intervals
+                                    (2015)</span>
+                            </h5>
+                        </a>
+                        <h6>Metal Progressivo</h6>
+                        <h5><span class="badge badge-primary">7.8/10</span></h5>
+                        <p class="card-text">gostei mas n sei se ouviria tanto quanto outros. ainda sim tem musicas mt
+                            boas. comeca melhor do que termina na minha opiniao</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/0VGu9HNzwJoqv56El0QumX?si=o98raj2-TqSWK_a_yJvZjA"
+                                    target="_blank"> <b>2.</b> Sure Shot <span class="badge badge-primary">8.7/10</span>
+                            </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/6H147Bkvdcxn7ONC99Eq6d?si=vzTLt7LlT425qFbSnbokKQ"
+                                    target="_blank"> <b>1.</b> I'm Awake </a> <span
+                                    class="badge badge-primary">8.5/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/01WNsmKswRHGMKQiEV6XWT?si=W_8Z7jr3RzSnQtRm3wSBXw"
+                                    target="_blank"> <b>5.</b> Black Box </a> <span
+                                    class="badge badge-primary">7.5/10</span> </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 15 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
 
             <div class="col-auto mb-3">
                 <div class="card" style="width: 18rem;">
@@ -436,31 +522,31 @@
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
 
-        <script>
-            var darkmode = true;
-            function toggleDarkMode() {
-                if (darkmode) {
-                    // Set button
-                    $('#themeButton').text('PM');
-                    $('#themeButton').removeClass('btn-light');
-                    $('#themeButton').addClass('btn-dark');
-                    // Set theme
-                    $('#darkMode').remove();
-                    $('head').append('<link id="lightMode" rel="stylesheet" type="text/css" href="lightmode.css">');
-                }
-                else {
-                    // Set button
-                    $('#themeButton').text('AM');
-                    $('#themeButton').removeClass('btn-dark');
-                    $('#themeButton').addClass('btn-light');
-                    // Set theme
-                    $('#lightmode').remove();
-                    $('head').append('<link id="darkMode" rel="stylesheet" type="text/css" href="darkmode.css">');
-                }
-                darkmode = !darkmode;
+    <script>
+        var darkmode = true;
+        function toggleDarkMode() {
+            if (darkmode) {
+                // Set button
+                $('#themeButton').text('PM');
+                $('#themeButton').removeClass('btn-light');
+                $('#themeButton').addClass('btn-dark');
+                // Set theme
+                $('#darkMode').remove();
+                $('head').append('<link id="lightMode" rel="stylesheet" type="text/css" href="lightmode.css">');
             }
-            
-        </script>
+            else {
+                // Set button
+                $('#themeButton').text('AM');
+                $('#themeButton').removeClass('btn-dark');
+                $('#themeButton').addClass('btn-light');
+                // Set theme
+                $('#lightmode').remove();
+                $('head').append('<link id="darkMode" rel="stylesheet" type="text/css" href="darkmode.css">');
+            }
+            darkmode = !darkmode;
+        }
+
+    </script>
 </body>
 
 </html>
