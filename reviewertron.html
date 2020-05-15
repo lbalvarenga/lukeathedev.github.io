@@ -1,0 +1,161 @@
+<!--
+    Nao roube essa pagina!
+    nao pq eh crime nem nada
+    mas pq ficou malfeita kkk
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewerTron 8000</title>
+</head>
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <h1>REVIEWERTRON 8000</h1>
+    <form id="albumForm">
+        <label for="albumArtwork">nome do arquivo da capa do album na pasta media/</label><br>
+        <input name="albumArtwork" type="text"><br>
+        <!-- <input name="albumArtwork" type="file" accept="image/jpeg, image/png" id="albumArtwork"><br> -->
+
+        <label for="albumName">nome do album / </label>
+        <label for="albumLink">link do album no spotify</label><br>
+        <input name="albumName" type="text">
+        <input name="albumLink" type="text"><br>
+
+        <label for="artistName">nome do artista + ano; ex: Tribal Tech (1990)</label><br>
+        <input name="artistName" type="text"><br>
+
+        <label for="albumGenre">genero do album; ex: Jazz Fusion</label><br>
+        <input name="albumGenre" type="text"><br>
+
+        <label for="albumScore">nota do album (0-11 de 10)</label><br>
+        <input name="albumScore" type="number" min="0" max="11" step="any"><br>
+
+        <label for="albumDesc">sinopse/review breve do album</label><br>
+        <textarea name="albumDesc" type="text" rows="4"></textarea><br>
+
+        <label>top 3 musicas favoritas</label><br>
+
+        <label for="top1Track">nº da musica/ </label>
+        <label for="top1Name">nome da musica / </label>
+        <label for="top1Link">link da musica no spotify / </label>
+        <label for="top1Score">nota da musica (0-11 de 10)</label><br>
+        <input name="top1Track" type="number" min="1">
+        <input name="top1Name" type="text">
+        <input name="top1Link" type="text">
+        <input name="top1Score" type="number" min="0" max="11" step="any"><br>
+        <input name="top2Track" type="number" min="1">
+        <input name="top2Name" type="text">
+        <input name="top2Link" type="text">
+        <input name="top2Score" type="number" min="0" max="11" step="any"><br>
+        <input name="top3Track" type="number" min="1">
+        <input name="top3Name" type="text">
+        <input name="top3Link" type="text">
+        <input name="top3Score" type="number" min="0" max="11" step="any"><br>
+
+        <br>
+        <h4>PREENCHA TODOS OS CAMPOS PQ EU NAO VOU OLHAR! SENAO O HTML VAI FICAR CAGADO!</h4>
+        <input type="submit" value="Gerar HTML">
+    </form>
+
+    <div id="htmlResult"></div>
+
+    <script>
+        var template = `
+        <div class="col-auto mb-3">
+            <div class="card" style="width: 18rem;">
+                <img src="media/{{albumArtwork}}" class="card-img-top" alt="Album Artwork">
+                <div class="card-body">
+                    <a href="{{albumLink}}" target="_blank">
+                        <h5 class="card-title">{{albumName}} <span class="text-muted">por {{artistName}}</span></h5>
+                    </a>
+                    <h6>{{albumGenre}}</h6>
+                    <h5><span class="badge {{albumScoreColor}}">{{albumScore}}/10</span></h5>
+                    <p class="card-text">{{albumDesc}}</p>
+                    <h6>Top 3</h6>
+                    <ol class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a class="sl-link"
+                                href="{{top1Link}}"
+                                target="_blank">
+                                <b>{{top1Track}}.</b> {{top1Name}}
+                                <span class="badge {{top1ScoreColor}}">{{top1Score}}/10</span>
+                        </li>
+                        <li class="list-group-item">
+                            <a class="sl-link"
+                                href="{{top2Link}}"
+                                target="_blank">
+                                <b>{{top2Track}}.</b> {{top2Name}}
+                            </a>
+                            <span class="badge {{top2ScoreColor}}">{{top2Score}}/10</span>
+                        </li>
+                        <li class="list-group-item">
+                            <a class="sl-link"
+                                href="{{top3Link}}"
+                                target="_blank">
+                                <b>{{top3Track}}.</b> {{top3Name}}
+                            </a>
+                            <span class="badge {{top3ScoreColor}}">{{top3Score}}/10</span>
+                        </li>
+                    </ol>
+                    <p class="card-text"><small class="text-muted">Review: {{date}}</small></p>
+                </div>
+            </div>
+        </div>
+`
+
+        $('#albumForm').submit(function () {
+            var albumData = $('#albumForm').serializeArray();
+            var resultDiv = $('#htmlResult');
+            var great = 'badge-primary';
+            var meh = 'badge-warning';
+            var bad = 'badge-danger';
+
+            var cardResult = template;
+            
+            // Regex magic ahead
+            // {{([^}]+)}}
+            albumData.forEach(data => {
+                var variableName = '{{' + data.name + '}}';
+                cardResult = cardResult.replace(variableName, data.value);
+
+                // im the laziest programmer alive
+                if (data.name == "albumScore") {
+                    if (parseFloat(data.value) >= 7) cardResult = cardResult.replace('{{albumScoreColor}}', great);
+                    else if (parseFloat(data.value) >= 5) cardResult = cardResult.replace('{{albumScoreColor}}', meh);
+                    else cardResult = cardResult.replace('{{albumScoreColor}}', bad);
+                }
+                if (data.name == "top1Score") {
+                    if (parseFloat(data.value) >= 7) cardResult = cardResult.replace('{{top1ScoreColor}}', great);
+                    else if (parseFloat(data.value) >= 5) cardResult = cardResult.replace('{{top1ScoreColor}}', meh);
+                    else cardResult = cardResult.replace('{{top1coreColor}}', bad);
+                }
+                if (data.name == "top2Score") {
+                    if (parseFloat(data.value) >= 7) cardResult = cardResult.replace('{{top2ScoreColor}}', great);
+                    else if (parseFloat(data.value) >= 5) cardResult = cardResult.replace('{{top2ScoreColor}}', meh);
+                    else cardResult = cardResult.replace('{{top2coreColor}}', bad);
+                }
+                if (data.name == "top3Score") {
+                    if (parseFloat(data.value) >= 7) cardResult = cardResult.replace('{{top3ScoreColor}}', great);
+                    else if (parseFloat(data.value) >= 5) cardResult = cardResult.replace('{{top3ScoreColor}}', meh);
+                    else cardResult = cardResult.replace('{{top3coreColor}}', bad);
+                }
+            })
+
+            var date = new Date();
+            var dateFmt = { year: 'numeric', month: 'long', day: 'numeric' };
+            cardResult = cardResult.replace('{{date}}', date.toLocaleDateString('pt-BR', dateFmt))
+
+            resultDiv.text(cardResult)
+
+            return false;
+        })
+    </script>
+</body>
+
+</html>
