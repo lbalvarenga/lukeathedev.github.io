@@ -1,3 +1,5 @@
+// TODO: Change badge color based on score
+
 let cardTemplate = `
 <div class="col-auto mb-3">
     <div class="card" style="width: 18rem;">

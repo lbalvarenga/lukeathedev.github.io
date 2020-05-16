@@ -15,7 +15,7 @@ function toggleDarkMode() {
         $('#themeButton').removeClass('btn-dark');
         $('#themeButton').addClass('btn-light');
         // Set theme
-        $('#lightmode').remove();
+        $('#lightMode').remove();
         $('head').append('<link id="darkMode" rel="stylesheet" type="text/css" href="css/darkmode.css">');
     }
     darkmode = !darkmode;
