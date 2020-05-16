@@ -7,7 +7,7 @@ function toggleDarkMode() {
         $('#themeButton').addClass('btn-dark');
         // Set theme
         $('#darkMode').remove();
-        $('head').append('<link id="lightMode" rel="stylesheet" type="text/css" href="lightmode.css">');
+        $('head').append('<link id="lightMode" rel="stylesheet" type="text/css" href="css/lightmode.css">');
     }
     else {
         // Set button
@@ -16,7 +16,7 @@ function toggleDarkMode() {
         $('#themeButton').addClass('btn-light');
         // Set theme
         $('#lightmode').remove();
-        $('head').append('<link id="darkMode" rel="stylesheet" type="text/css" href="darkmode.css">');
+        $('head').append('<link id="darkMode" rel="stylesheet" type="text/css" href="css/darkmode.css">');
     }
     darkmode = !darkmode;
 }
