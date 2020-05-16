@@ -1,0 +1,157 @@
+<!--
+    Um dia eu ainda vou refatorar o codigo
+    e usar JS mas por enquanto o REVIEWERTRON8000
+    da pro gasto
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link id="darkMode" rel="stylesheet" type="text/css" href="darkmode.css">
+    <link rel="shortcut icon" href="media/reviewertron9k.png" type="image/x-icon">
+    <title>ReviewerTRON 9000</title>
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <button id="themeButton" class="float-right btn btn-light" onclick="toggleDarkMode();">AM</button>
+            <h1 class="display-4">🖥️ ReviewerTRON 9000</h1>
+            <p class="lead">agora em JSON!<br>
+                eu to <a href="https://twitter.com/lbalvarenga55" target="_blank">aqui</a><br>
+                o site ta <a href="https://github.com/lukeathedev/lukeathedev.github.io" target="_blank">aqui</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="m-4">
+        <form id="reviewerTronForm">
+            <h3>Informação Geral</h3>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="albumArtwork">Nome da capa do album na pasta <i>media/</i></label>
+                    <input type="text" class="form-control" name="albumArtwork"
+                        placeholder="ex: jacob_collier_in_my_room.jpg">
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="albumLink">Link do álbum no Spotify</label>
+                    <input type="text" class="form-control" name="albumLink"
+                        placeholder="ex: https://open.spotify.com/album/4yVaTn71IU28NA0Et4bRED">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="albumYear">Ano de lançamento</label>
+                    <input type="number" class="form-control" name="albumYear" placeholder="ex: 2016">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="albumName">Nome do álbum</label>
+                    <input type="text" class="form-control" name="albumName" placeholder="ex: In My Room">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="albumArtist">Nome do artista</label>
+                    <input type="text" class="form-control" name="albumArtist" placeholder="ex: Jacob Collier">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="albumGenre">Gênero do álbum</label>
+                    <input type="text" class="form-control" name="albumGenre" placeholder="ex: Jazz Fusion">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="albumScore">Nota</label>
+                    <input type="number" class="form-control" name="albumScore" placeholder="ex: 10" min="0" max="11">
+                </div>
+            </div>
+            <div class="form-group col-md-14">
+                <label for="albumSynopsis">Breve sinopse/review do álbum</label>
+                <textarea class="form-control" name="albumSynopsis" rows="3"></textarea>
+            </div>
+            <h3>Top 3 Músicas</h3>
+            <div class="form-row">
+                <div class="form-group col-md-1">
+                    <label for="top1Number">Nº</label>
+                    <input type="number" class="form-control" name="songNumber" placeholder="ex: 3" min="0">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="top1Name">Nome da música</label>
+                    <input type="text" class="form-control" name="songName" placeholder="ex: Hideaway">
+                </div>
+                <div class="form-group col-md-7">
+                    <label for="top1Link">Link da música no Spotify</label>
+                    <input type="text" class="form-control" name="songLink"
+                        placeholder="ex: https://open.spotify.com/track/00BTDWR6xCaGdst6cPKkpF?si=JJMqbk7kTMC6bv0srgWckw">
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="top1Score">Nota</label>
+                    <input type="number" class="form-control" name="songScore" placeholder="ex: 10" min="0" max="11">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-1">
+                    <label for="top2Number">Nº</label>
+                    <input type="number" class="form-control" name="songNumber" placeholder="ex: 8" min="0">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="top2Name">Nome da música</label>
+                    <input type="text" class="form-control" name="songName" placeholder="ex: Hajanga">
+                </div>
+                <div class="form-group col-md-7">
+                    <label for="top2Link">Link da música no Spotify</label>
+                    <input type="text" class="form-control" name="songLink"
+                        placeholder="ex: https://open.spotify.com/track/5ciCKiLGTIgfHKV4MxjInt?si=xyPSxBZHQWepWbQHSIEtqw">
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="top2Score">Nota</label>
+                    <input type="number" class="form-control" name="songScore" placeholder="ex: 8.7" min="0" max="11">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-1">
+                    <label for="songNumber">Nº</label>
+                    <input type="number" class="form-control" name="songNumber" placeholder="ex: 11" min="0">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="songName">Nome da música</label>
+                    <input type="text" class="form-control" name="songName" placeholder="ex: Don't You Know">
+                </div>
+                <div class="form-group col-md-7">
+                    <label for="songLink">Link da música no Spotify</label>
+                    <input type="text" class="form-control" name="songLink"
+                        placeholder="ex: https://open.spotify.com/track/5ciCKiLGTIgfHKV4MxjInt?si=xyPSxBZHQWepWbQHSIEtqw">
+                </div>
+                <div class="form-group col-md-1">
+                    <label for="songScore">Nota</label>
+                    <input type="number" class="form-control" name="songScore" placeholder="ex: 8.5" min="0" max="11">
+                </div>
+            </div>
+            <p class="text-muted">Links podem ser preenchidos com <i>#</i>*</p>
+
+            <input type="submit" class="btn btn-primary" value="Gerar JSON">
+        </form>
+
+    </div>
+
+    <div class="m-4">
+        <p id="jsonResult">Resultado aparecerá aqui.</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+    <script src="js/theme.js"></script>
+    <script src="js/reviewertron/converter.js"></script>
+</body>
+
+</html>

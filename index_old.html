@@ -1,0 +1,528 @@
+<!--
+    Um dia eu ainda vou refatorar o codigo
+    e usar JS mas por enquanto o REVIEWERTRON8000
+    da pro gasto
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link id="darkMode" rel="stylesheet" type="text/css" href="darkmode.css">
+    <link rel="shortcut icon" href="media/favicon.png" type="image/x-icon">
+    <title>Reviews</title>
+</head>
+
+<body>
+    <style>
+        .sl-link {
+            color: black;
+        }
+
+        .badge-primary {
+            background-color: #007bff;
+            /* default bootstrap color*/
+        }
+    </style>
+
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <button id="themeButton" class="float-right btn btn-light" onclick="toggleDarkMode();">AM</button>
+            <h1 class="display-4">🎹 Reviews</h1>
+            <p class="lead">albuns que eu encontrei.<br>
+                eu to <a href="https://twitter.com/lbalvarenga55" target="_blank">aqui</a><br>
+                o site ta <a href="https://github.com/lukeathedev/lukeathedev.github.io" target="_blank">aqui</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- futureproofing -->
+    <!-- <nav aria-label="...">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Últimas</a>
+            </li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="page-item"><a class="page-link" href="page2.html">2</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Primeiras</a>
+            </li>
+        </ul>
+    </nav> -->
+
+    <div class="container-fluid mt-4">
+        <div class="row justify-content-center">
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/miles_davis_kind_of_blue.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/1weenld61qoidwYuZ1GESA" target="_blank">
+                            <h5 class="card-title">Kind Of Blue <span class="text-muted">por Miles Davis (1959)</span></h5>
+                        </a>
+                        <h6>Jazz</h6>
+                        <h5><span class="badge badge-primary">10/10</span></h5>
+                        <p class="card-text">esse album me deixa com um sorriso no rosto. a unica coisa q as vezes
+                            incomoda eh o stereo tipo a minha orelha direita ja ficou surda com o trompete</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/3NvYPUNu6nwQgN31UnoDbn" target="_blank">
+                                    <b>2.</b> Freddie Freeloader <span class="badge badge-primary">11/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/7q3kkfAVpmcZ8g6JUThi3o" target="_blank">
+                                    <b>1.</b> So What </a> <span class="badge badge-primary">10/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/0TUa7gBg7LJH6B8dkNVioU" target="_blank">
+                                    <b>4.</b> All Blues </a> <span class="badge badge-primary">10/10</span> </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 15 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/intervals_the_shape_of_colour.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/4MYLm8Uxayy4UyqFHPHfBB" target="_blank">
+                            <h5 class="card-title">The Shape of Colour <span class="text-muted">por Intervals
+                                    (2015)</span>
+                            </h5>
+                        </a>
+                        <h6>Metal Progressivo</h6>
+                        <h5><span class="badge badge-primary">7.8/10</span></h5>
+                        <p class="card-text">gostei mas n sei se ouviria tanto quanto outros. ainda sim tem musicas mt
+                            boas. comeca melhor do que termina na minha opiniao</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/0VGu9HNzwJoqv56El0QumX?si=o98raj2-TqSWK_a_yJvZjA"
+                                    target="_blank"> <b>2.</b> Sure Shot <span class="badge badge-primary">8.7/10</span>
+                            </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/6H147Bkvdcxn7ONC99Eq6d?si=vzTLt7LlT425qFbSnbokKQ"
+                                    target="_blank"> <b>1.</b> I'm Awake </a> <span
+                                    class="badge badge-primary">8.5/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/01WNsmKswRHGMKQiEV6XWT?si=W_8Z7jr3RzSnQtRm3wSBXw"
+                                    target="_blank"> <b>5.</b> Black Box </a> <span
+                                    class="badge badge-primary">7.5/10</span> </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 15 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/snarky_puppy_we_like_it_here.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/4GzjQ0xXRlLl78ih481BUi" target="_blank">
+                            <h5 class="card-title">We Like It Here <span class="text-muted">por Snarky Puppy
+                                    (2014)</span></h5>
+                        </a>
+                        <h6>Jazz Fusion</h6>
+                        <h5><span class="badge badge-primary">10/10</span></h5>
+                        <p class="card-text">um dos primeiros albuns de jazz fusion que eu ouvi. marcou o inicio da
+                            minha jornada no mundo II V I. avaliacao tendenciosa (ou nao) pq me mostrou um monte de
+                            outros artistas mt bons</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/1MglqgabKH4iSkw8xHJ0J9?si=1rU3dgkpSHGir8dACnTP7Q"
+                                    target="_blank"> <b>2.</b> What About Me? <span
+                                        class="badge badge-primary">11/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/68d6ZfyMUYURol2y15Ta2Y?si=aWRCreu0THSKOuVVe2mSyQ"
+                                    target="_blank"> <b>8.</b> Lingus </a> <span
+                                    class="badge badge-primary">10/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/41fiRrzEqGo4pTVqXYrfnz?si=M45OvihhTpGlRb9Efvf87g"
+                                    target="_blank"> <b>3.</b> Sleeper </a> <span
+                                    class="badge badge-primary">10/10</span> </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/tesseract_altered_state.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/7gfEeNb3awfwfZoTXCONWJ" target="_blank">
+                            <h5 class="card-title">Altered State <span class="text-muted">por TesseracT (2013)</span>
+                            </h5>
+                        </a>
+                        <h6>Metal Progressivo/Djent</h6>
+                        <h5><span class="badge badge-primary">8.5/10</span></h5>
+                        <p class="card-text">bem pesado mas mt bom. os ritmos sincopados e os riffs sao mt legais.
+                            filosofei mt em "Of Reality - Calabi-Yau"</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/4gbbAqMUFDxWBbJLd01b6S?si=bq73Xe4XTG-XIDeJyB0fmg"
+                                    target="_blank"> <b>8.</b> Of Reality - Calabi-Yau <span
+                                        class="badge badge-primary">10/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/4a2GjzffBEBtaa3u6Im34R?si=Zp-MM2JLTM2GXuHkz_DnqQ"
+                                    target="_blank"> <b>2.</b> Of Matter - Retrospect </a> <span
+                                    class="badge badge-primary">9/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/2Wh5HvoC2dfqsjTts9cKtK?si=MxZ8RAQ-TxqH9KOR82AzaQ"
+                                    target="_blank"> <b>9.</b> Of Energy - Singularity </a> <span
+                                    class="badge badge-primary">9/10</span> </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/badbadnotgood_iii.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/2VRbf914JFe94E5tHumySe" target="_blank">
+                            <h5 class="card-title">III <span class="text-muted">por BADBADNOTGOOD (2014)</span></h5>
+                        </a>
+                        <h6>Hip Hop/Instrumental</h6>
+                        <h5><span class="badge badge-primary">10/10</span></h5>
+                        <p class="card-text">os caras misturam jazz, hip hop e eletronica n tem como dar ruim. o solo de
+                            piano em "Triangle" e o solo de contrabaixo em "Eyes Closed" sao mt bons</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/5hpyipkIiOswUJkrKOI089?si=4K2KfWaGRymHGynWgkzTYA"
+                                    target="_blank"> <b>1.</b> Triangle <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/6Cnn170Jo7G1nHp6kzpApj?si=Q3L6KLVuTUCVqaScxxapbA"
+                                    target="_blank"> <b>5.</b> Eyes Closed </a> <span
+                                    class="badge badge-primary">10/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/7foERGuYueBpsIRBj36cjP?si=gSU6fre2R3SPWoJF2B5MLw"
+                                    target="_blank"> <b>6.</b> Hedron </a> <span
+                                    class="badge badge-primary">10/10</span> </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/chon_chon.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/31xSTnqna5WeOdCN0AJMNJ" target="_blank">
+                            <h5 class="card-title">Chon <span class="text-muted">por Chon (2019)</span></h5>
+                        </a>
+                        <h6>Math Rock</h6>
+                        <h5><span class="badge badge-primary">9/10</span></h5>
+                        <p class="card-text">esse album eh mt bom. as musicas sao mt relax. o baixo ficou top, so achei
+                            q na mixagem poderia ter ficado um pouco mais alto</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/3YuSAde2jORJyU2p9k3VFl?si=JzLUvOIjQ-uFSdscas2byg"
+                                    target="_blank"> <b>10.</b> Dead End <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/5ffFt4TVhg2MZT0AGuHY7F?si=G7_DNqEuSYK5CqIVdM9Big"
+                                    target="_blank"> <b>11.</b> Thanks </a> <span
+                                    class="badge badge-primary">10/10</span> </li>
+                            <li class="list-group-item"> <a class="sl-link"
+                                    href="https://open.spotify.com/track/6moUIFeyCYf7Km03GPBqKd?si=wwMKqLNGRUWMix6MFzYxXA"
+                                    target="_blank"> <b>1.</b> Ghost </a> <span class="badge badge-primary">10/10</span>
+                            </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/tribal_tech_tribal_tech.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/66mZKQJyxMfQuI2Bqbg62N" target="_blank">
+                            <h5 class="card-title">Tribal Tech <span class="text-muted">por Tribal Tech (1990)</span>
+                            </h5>
+                        </a>
+                        <h6>Jazz Fusion</h6>
+                        <h5><span class="badge badge-warning">6.5/10</span></h5>
+                        <p class="card-text">nao consegui gostar da maioria das musicas. sao boas mas meio estranhas. a
+                            que salva eh "The Necessary Blonde" so pelo solo de baixo top do Gary Willis</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/5trQG6NU4K6sJCTGoRLHSZ?si=7yIlfSxCTYe03dtr6i1lHw"
+                                    target="_blank">
+                                    <b>7.</b> The Necessary Blonde
+                                    <span class="badge badge-primary">11/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/62HvlypQV9LZdyqcz3t4Uy?si=gjRlv6xGQjqu8iVKV8roIg"
+                                    target="_blank">
+                                    <b>11.</b> Wasteland
+                                </a>
+                                <span class="badge badge-primary">7.5/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/0zWGqVPADmiKfJx6y2S4OU?si=jiXOz-c0Rwmc3DrLq3yNIA"
+                                    target="_blank">
+                                    <b>2.</b> Big Girl Blues
+                                </a>
+                                <span class="badge badge-primary">7.5/10</span>
+                            </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/two_steps_from_hell_skyworld.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/01w0dp5OVOgviPw2HHXB3M" target="_blank">
+                            <h5 class="card-title">SkyWorld <span class="text-muted">por Two Steps From Hell
+                                    (2012)</span></h5>
+                        </a>
+                        <h6>Orquestral/Épica</h6>
+                        <h5><span class="badge badge-primary">10/10</span></h5>
+                        <p class="card-text">0 steps from hell = hell, 1 step from hell = earth, 2 steps from hell =
+                            heaven. sinceramente mt bom. avaliacao tendenciosa pq o album traz mta nostalgia</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/4o0sJFXHckKlBhhynZsSIg?si=j3DrLwrrQMKerMxmrS2xCQ"
+                                    target="_blank">
+                                    <b>4.</b> El Dorado
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/2jn89xTHIVsy167uOmAewt?si=VAQrvGeZS-28Nl-3PF0a_w"
+                                    target="_blank">
+                                    <b>9.</b> Blackheart
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/34x22hY9CKf3ZoPjQwZSgc?si=jWMRMUnoRPi6dPOC2Z45ng"
+                                    target="_blank">
+                                    <b>14.</b> For the Win
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/c418_excursions.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/6X7fuyEFf41IN23cYB9Eyc" target="_blank">
+                            <h5 class="card-title">Excursions <span class="text-muted">por C418 (2018)</span></h5>
+                        </a>
+                        <h6>Ambiente/Eletrônica</h6>
+                        <h5><span class="badge badge-primary">8/10</span></h5>
+                        <p class="card-text">gosto mt dos ostinatos q ele faz nos baixos e handpans. o cara fez a trilha
+                            sonora do minecraft eu n preciso falar mais nada. so achei q o album comeca mt bom mas n
+                            fica tao legal mais pro final</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/1nEtXJCAxRjAR6UPMrTwki?si=27_MEKb-RnCrHddmfPjezg"
+                                    target="_blank">
+                                    <b>1.</b> Excursions
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/71llxjRuqCzzeVa5UTf6Xc?si=Hg3kjBAcR_G3bnUZGLhBYw"
+                                    target="_blank">
+                                    <b>2.</b> Cold Summer
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/1s5xRr8vlvZsJglJgHmCn7?si=NKaOH4gdRuyfT9OCEh--SA"
+                                    target="_blank">
+                                    <b>3.</b> Txl
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/moonchild_voyager.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/3Q4mnXDUcVMhx3AVRCbcgi" target="_blank">
+                            <h5 class="card-title">Voyager <span class="text-muted">por Moonchild (2017)</span></h5>
+                        </a>
+                        <h6>R&B</h6>
+                        <h5><span class="badge badge-primary">8.5/10</span></h5>
+                        <p class="card-text">brabo mas suave</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/3zzdIzBIq1iLB2kYyblXle?si=OTxoNvL5SS6SwFCqVZBuYw"
+                                    target="_blank">
+                                    <b>11.</b> Change Your Mind
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/0JYaCnwwLv7dSAGEzJLxkd?si=xpjX2G2kSfi6q-8RFEqyaA"
+                                    target="_blank">
+                                    <b>2.</b> Cure
+                                </a>
+                                <span class="badge badge-primary">9/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/5NbdN6rPwkntsk9rdHO4vl?si=_d2ePE6QRDqrakORVuVHiA"
+                                    target="_blank">
+                                    <b>6.</b> The List
+                                </a>
+                                <span class="badge badge-primary">8.6/10</span>
+                            </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/jacob_collier_djesse_vol_2.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/3zNi5dCpkbm4zv7h1vGOMy" target="_blank">
+                            <h5 class="card-title">Djesse Vol. 2 <span class="text-muted">por Jacob Collier
+                                    (2019)</span></h5>
+                        </a>
+                        <h6>Explosão Musical (Fusion)</h6>
+                        <h5><span class="badge badge-primary">9/10</span></h5>
+                        <p class="card-text">esse album eh MT bom. tem umas musicas meio estranhas mas a maioria eh de
+                            mt bom gosto. tem feat do steve vai ainda mano n tem como n gostar</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/0x7xrbNiRNr6FvvsnHaHfp?si=rZBrYWpTSiqp6hqi_yxudg"
+                                    target="_blank">
+                                    <b>1; 2.</b> Intro e Sky Above
+                                </a>
+                                <span class="badge badge-primary">11/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/0fu5r69xQg8OQCGsK2S5Il?si=Dxno1plNT0S4BgfqI08iag"
+                                    target="_blank">
+                                    <b>11.</b> Here Comes The Sun (feat. dodie)
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/5tR868MtMK0NXjMJZ9eCWw?si=ooTd6SmsSOi0iM0FXKTbdw"
+                                    target="_blank">
+                                    <b>14; 15.</b> Do You Feel Love e Outro (feat. Steve Vai)
+                                </a>
+                                <span class="badge badge-primary">9/10</span>
+                            </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto mb-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="media/jacob_collier_in_my_room.jpg" class="card-img-top" alt="Album Artwork">
+                    <div class="card-body">
+                        <a href="https://open.spotify.com/album/4yVaTn71IU28NA0Et4bRED" target="_blank">
+                            <h5 class="card-title">In My Room <span class="text-muted">por Jacob Collier (2016)</span>
+                            </h5>
+                        </a>
+                        <h6>Explosão Musical (Fusion)</h6>
+                        <h5><span class="badge badge-primary">7.7/10</span></h5>
+                        <p class="card-text">tem musicas muito boas, mas outras que eu n gostei muito. o baixo no final
+                            de "Hideaway" eh mt bom</p>
+                        <h6>Top 3</h6>
+                        <ol class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/00BTDWR6xCaGdst6cPKkpF?si=0B5hIZu8SkKEXOqYWEB8Jw"
+                                    target="_blank">
+                                    <b>3.</b> Hideaway
+                                </a>
+                                <span class="badge badge-primary">10/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/5ciCKiLGTIgfHKV4MxjInt?si=Ipf7BniXQ96tJLN0cAq36g"
+                                    target="_blank">
+                                    <b>8.</b> Hajanga
+                                </a>
+                                <span class="badge badge-primary">8.7/10</span>
+                            </li>
+                            <li class="list-group-item">
+                                <a class="sl-link"
+                                    href="https://open.spotify.com/track/3rcqoJSyVm89O0RyoVRSfk?si=IQEOov05QpKE8ezUupyoaA"
+                                    target="_blank">
+                                    <b>11.</b> Don't You Know
+                                </a>
+                                <span class="badge badge-primary">8.5/10</span>
+                            </li>
+                        </ol>
+                        <p class="card-text"><small class="text-muted">Review: 14 de maio de 2020</small></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+    <script src="js/theme.js"></script>
+</body>
+
+</html>

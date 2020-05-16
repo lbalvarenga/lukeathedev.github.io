@@ -1,0 +1,36 @@
+{
+    "reviews": [
+        {
+            "id": "21564286",
+            "albumArtwork": "jacob_collier_in_my_room.jpg",
+            "albumLink": "https://open.spotify.com/album/4yVaTn71IU28NA0Et4bRED",
+            "albumYear": "2016",
+            "albumName": "In My Room",
+            "albumArtist": "Jacob Collier",
+            "albumGenre": "Jazz Fusion",
+            "albumScore": "9",
+            "albumSynopsis": "tem musicas mt boas, mas outras q eu n gostei muito. o baixo no final de \"Hideaway\" eh mt bom",
+            "topSongs": [
+                {
+                    "songNumber": "3",
+                    "songName": "Hideaway",
+                    "songLink": "https://open.spotify.com/track/00BTDWR6xCaGdst6cPKkpF?si=JJMqbk7kTMC6bv0srgWckw",
+                    "songScore": "11"
+                },
+                {
+                    "songNumber": "8",
+                    "songName": "Hajanga",
+                    "songLink": "https://open.spotify.com/track/5ciCKiLGTIgfHKV4MxjInt?si=xyPSxBZHQWepWbQHSIEtqw",
+                    "songScore": "9"
+                },
+                {
+                    "songNumber": "11",
+                    "songName": "Don't You Know",
+                    "songLink": "https://open.spotify.com/track/3rcqoJSyVm89O0RyoVRSfk?si=3osSqZuATEGbnydg2oBwmQ",
+                    "songScore": "9"
+                }
+            ],
+            "reviewDate": "2020-05-15T23:57:27.214Z"
+        }
+    ]
+}
