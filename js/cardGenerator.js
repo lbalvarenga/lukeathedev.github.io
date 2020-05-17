@@ -40,12 +40,14 @@ let card = cardTemplate;
 
 function setBadge(key, score, card) {
     let scores = {
+        'epic': 'badge-secondary',
         'great': 'badge-primary',
         'average': 'badge-warning',
         'bad': 'badge-danger'
     };
     let variableName = '{{' + key + '}}'
-    if (score >= 7) card = card.replace(variableName, scores['great']);
+    if (score > 10) card = card.replace(variableName, scores['epic']);
+    else if (score >= 7) card = card.replace(variableName, scores['great']);
     else if (score >= 5) card = card.replace(variableName, scores['average']);
     else card = card.replace(variableName, scores['bad']);
 
