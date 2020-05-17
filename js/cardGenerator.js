@@ -1,5 +1,3 @@
-// TODO: Change badge color based on score
-
 let cardTemplate = `
 <div class="col-auto mb-3">
     <div class="card" style="width: 18rem;">
@@ -9,7 +7,7 @@ let cardTemplate = `
                 <h5 class="card-title">{{albumName}} <span class="text-muted">por {{albumArtist}} ({{albumYear}})</span></h5>
             </a>
             <h6>{{albumGenre}}</h6>
-            <h5><span class="badge badge-primary">{{albumScore}}/10</span></h5>
+            <h5><span class="badge {{albumScoreColor}}">{{albumScore}}/10</span></h5>
             <p class="card-text">{{albumSynopsis}}</p>
             <h6>Top 3</h6>
             <ol class="list-group list-group-flush">
@@ -17,19 +15,19 @@ let cardTemplate = `
                     <a class="sl-link" href="{{songLink}}" target="_blank">
                         <b>{{songNumber}}.</b> {{songName}}
                     </a>
-                    <span class="badge badge-primary">{{songScore}}/10</span>
+                    <span class="badge {{songScoreColor}}">{{songScore}}/10</span>
                 </li>
                 <li class="list-group-item">
                     <a class="sl-link" href="{{songLink}}" target="_blank">
                         <b>{{songNumber}}.</b> {{songName}}
                     </a>
-                    <span class="badge badge-primary">{{songScore}}/10</span>
+                    <span class="badge {{songScoreColor}}">{{songScore}}/10</span>
                 </li>
                 <li class="list-group-item">
                     <a class="sl-link" href="{{songLink}}" target="_blank">
                         <b>{{songNumber}}.</b> {{songName}}
                     </a>
-                    <span class="badge badge-primary">{{songScore}}/10</span>
+                    <span class="badge {{songScoreColor}}">{{songScore}}/10</span>
                 </li>
             </ol>
             <p class="card-text"><small class="text-muted">Review: {{reviewDate}}</small></p>
@@ -39,10 +37,31 @@ let cardTemplate = `
 `
 
 let card = cardTemplate;
+
+function setBadge(key, score, card) {
+    let scores = {
+        'great': 'badge-primary',
+        'average': 'badge-warning',
+        'bad': 'badge-danger'
+    };
+    let variableName = '{{' + key + '}}'
+    if (score >= 7) card = card.replace(variableName, scores['great']);
+    else if (score >= 5) card = card.replace(variableName, scores['average']);
+    else card = card.replace(variableName, scores['bad']);
+
+    return card;
+}
+
+// Retrieve reviews and 'parse' into template
 $.getJSON('data/reviews.json', function (data) {
     $.each(data.reviews, function (i, review) {
         $.each(review, function (key, value) {
             let variableName = '{{' + key + '}}';
+
+            // Change badge color based on score
+            if (key == 'albumScore') {
+                card = setBadge('albumScoreColor', parseFloat(value), card);
+            }
 
             // Append songs to Top 3 List
             if (key == 'topSongs') {
@@ -50,6 +69,11 @@ $.getJSON('data/reviews.json', function (data) {
                     $.each(value, function (key, value) {
                         let variableName = '{{' + key + '}}'
                         card = card.replace(variableName, value)
+
+                        // Change badge color based on score
+                        if (key == 'songScore') {
+                            card = setBadge('songScoreColor', parseFloat(value), card);
+                        }
                     })
                 })
             }
@@ -63,8 +87,9 @@ $.getJSON('data/reviews.json', function (data) {
 
             card = card.replace(variableName, value);
         })
+
         $('#card-holder').append(card)
         card = cardTemplate;
     })
     
-})
+});
