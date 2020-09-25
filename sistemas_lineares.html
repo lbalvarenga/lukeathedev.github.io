@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!-- KaTeX requires the use of the HTML5 doctype. Without it, KaTeX may not render properly -->
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css"
+        integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js"
+        integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O"
+        crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/contrib/auto-render.min.js"
+        integrity="sha384-yACMu8JWxKzSp/C1YV86pzGiQ/l1YUfE8oPuahJQxzehAjEt2GiQuy/BIvl9KyeF" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+</head>
+
+<body>
+    <style>
+        body {
+            background-color: #002635;
+            color: white;
+            font-size: 1.5em;
+            line-height: 5;
+        }
+    </style>
+    <p id="latex"></p>
+
+
+    <script>
+        class Equation {
+            // variables is an array (x, y, z, ...)
+            constructor(variables, result) {
+                this.variables = variables;
+                this.result = result;
+            }
+
+            toLatex() {
+                let text = "";
+                let varLetter = "";
+                for (let i = 0; i < this.variables.length; i++) {
+                    if (i == 0 && this.variables[i] < 0) text += "-";
+                    if (i >= 3) varLetter = String.fromCharCode(0x7A - i);
+                    else        varLetter = String.fromCharCode(0x78 + i);
+
+                    let number = Math.abs(this.variables[i]);
+                    if (number == 1) number = ""
+                    text += number + varLetter + (this.variables[i + 1] > 0 ? " + " : " - ");
+                }
+                return text.slice(0, -3) + " = " + this.result;
+            }
+        }
+
+        class System {
+            // equations is an array (Equation(...), Equation(...), ...)
+            constructor(equations) {
+                this.equations = equations;
+
+                let eqSize = this.equations[0].variables.length;
+                this.equations.forEach(equation => {
+                    if (equation.variables.length != eqSize) throw "EquationVariableAmountMismatch";
+                });
+            }
+
+            toLatexEquations() {
+                let text = "\\begin{cases} ";
+                this.equations.forEach(equation => {
+                    text += equation.toLatex() + " \\\\ ";
+                });
+                return text.slice(0, -3) + "\\end{cases} \\\\";
+            }
+
+            toLatexMatrix(matrix) {
+                let text = "\\left[\\begin{array}{";
+                for (let i = 0; i < matrix.length; i++) { text += "c "}
+                text += "| c}";
+
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        text += +parseFloat(matrix[i][j]).toFixed(3) + " & ";
+                    }
+                    text = text.slice(0, -3) + " \\\\ ";
+                }
+                return text.slice(0, -3) + "\\end{array}\\right]";
+            }
+
+            // https://pt.wikipedia.org/wiki/Elimina%C3%A7%C3%A3o_de_Gauss
+            // returns values of variables (x, y, z, ...) and LaTeX matrices
+            // that go step by step
+            solveMatrix() {
+                let a = this.getMatrix();
+
+                // TODO: Display floats as fractions instead
+
+                if (a[0][0] == 0) {
+                    for (let j = 0; j < a[0].length; j++) {
+                        a[0][j] += a[1][j];
+                    }
+                }
+
+                for (let m = 0; m < a.length; m++) {
+                    for (let i = m + 1; i < a.length; i++) {
+                        let k = a[i][m] / a[m][m];
+                        for (let j = m; j < a[i].length; j++) {
+                            a[i][j] -= (k * a[m][j]);
+                        }
+                    }
+                }
+
+                console.log(a.length);
+                return [[1, 1, 1], a];
+            }
+
+            getMatrix() {
+                let matrix = new Array(this.equations.length);
+                for (let i = 0; i < this.equations.length; i++) {
+                    matrix[i] = new Array(this.equations[i].variables.length + 1);
+                    for (let j = 0; j < this.equations[i].variables.length + 1; j++) {
+                        if (this.equations[i].variables[j] == undefined) {
+                            matrix[i][j] = this.equations[i].result;
+                            continue;
+                        }
+                        matrix[i][j] = this.equations[i].variables[j];
+                    }
+                }
+                return matrix;
+            }
+        }
+
+        let eq1 = new Equation([2, 1, -3], -1);
+        let eq2 = new Equation([-1, 3, 2], 12);
+        let eq3 = new Equation([3, 1, -3], 0)
+        let sys = new System([eq1, eq2, eq3]);
+        let text = "\\alpha = " + sys.toLatexEquations() + "A = " + sys.toLatexMatrix(sys.getMatrix());
+        text += " \\\\ A = " + sys.toLatexMatrix(sys.solveMatrix()[1]);
+        katex.render(text, document.getElementById('latex'), {
+            throwOnError: false
+        });
+    </script>
+</body>
+
+</html>
