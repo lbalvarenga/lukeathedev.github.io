@@ -24,20 +24,39 @@
 <body>
     <style>
         body {
-            background-color:#222222;
+            background-color:#1f1e1e;
             color: white;
             font-size: 1.5em;
         }
+        h1 {
+            font-family: 'VT323', monospace;
+        }
+        #warning {
+            color: yellow;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 0.75em;
+        }
+        a {
+            text-decoration: none;
+            color: #00dda6;
+        }
+        a:hover {
+            color: #00fabb;
+        }
+        a:active {
+            font-size: 0.95em;
+        }
         .base{
             margin-bottom: 0.75em;
-            color: #00bc8c;
+            color: #00dda6;
         }
         .mord {
             color: white;
         }
     </style>
+    <h1>Linear System Solver by <a href="https://twitter.com/lbalvarenga55" target="_blank">lbalvarenga55</a>.</h1>
+    <p id="warning">in order to use it, you must download this webpage and edit it where it says 'let eq = ...' to match your equations! i'll neaten it up soon</p>
     <p id="latex"></p>
-
 
     <script>
         class Equation {
