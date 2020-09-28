@@ -17,15 +17,23 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/contrib/auto-render.min.js"
         integrity="sha384-yACMu8JWxKzSp/C1YV86pzGiQ/l1YUfE8oPuahJQxzehAjEt2GiQuy/BIvl9KyeF" crossorigin="anonymous"
         onload="renderMathInElement(document.body);"></script>
+
+    <script src="./js/fraction/fraction.min.js"></script>
 </head>
 
 <body>
     <style>
         body {
-            background-color: #002635;
+            background-color:#222222;
             color: white;
             font-size: 1.5em;
-            line-height: 5;
+        }
+        .base{
+            margin-bottom: 0.75em;
+            color: #00bc8c;
+        }
+        .mord {
+            color: white;
         }
     </style>
     <p id="latex"></p>
@@ -48,7 +56,8 @@
                     else        varLetter = String.fromCharCode(0x78 + i);
 
                     let number = Math.abs(this.variables[i]);
-                    if (number == 1) number = ""
+                    if (number == 1) number = "";
+                    else number = new Fraction(number).toLatex();
                     text += number + varLetter + (this.variables[i + 1] > 0 ? " + " : " - ");
                 }
                 return text.slice(0, -3) + " = " + this.result;
@@ -75,13 +84,13 @@
             }
 
             toLatexMatrix(matrix, partial = false) {
-                let text = "\\left[\\begin{array}{";
+                let text = "\\def\\arraystretch{1.35} \\left[\\begin{array}{";
                 for (let i = 0; i < matrix.length; i++) { text += "c "}
                 text += (partial ? "" : "|") + " c}";
 
                 for (let i = 0; i < matrix.length; i++) {
                     for (let j = 0; j < matrix[i].length; j++) {
-                        text += +parseFloat(matrix[i][j]).toFixed(3) + " & ";
+                        text += new Fraction(matrix[i][j]).toLatex() + " & "; //+parseFloat(matrix[i][j]).toFixed(3) + " & ";
                     }
                     text = text.slice(0, -3) + " \\\\ ";
                 }
@@ -107,7 +116,7 @@
                     return [undefined, text];
                 }
 
-                text += "Solution \\ to \\ A = ";
+                text += "Solution \\ to \\ A = " + this.toLatexMatrix(a) + " \\\\ ";
 
                 // if first element is zero do tricks (dunno if actually works)
                 if (a[0][0] == 0) {
@@ -117,20 +126,37 @@
                     text += this.toLatexMatrix(a) + " \\\\ ";
                 }
 
-                for (let m = 0; m < a.length; m++) {  
-                    text += this.toLatexMatrix(a) + " \\\\ ";
+                for (let m = 0; m < a.length; m++) {
                     for (let i = m + 1; i < a.length; i++) {
-
                         let k = a[i][m] / a[m][m];
                         for (let j = m; j < a[i].length; j++) {
                             a[i][j] -= (k * a[m][j]);
-                        }                        
+                        }
+                        text += this.toLatexMatrix(a) + "L_" + (i+1) + "\\leftarrow L_" + (i+1);
+                        text += (k > 0 ? " - " : " + ") + new Fraction(k).abs().toLatex() + " \\cdot L_" + (m+1) + " \\\\ ";
                     }
                 }
 
-                text += this.toLatexMatrix(a) + " \\\\ ";
+                // Find variables
+                let answers = this.solveVariables(a);
 
-                return [[1, 1, 1], text];
+                return [answers, text];
+            }
+
+            // TODO: show how variables are getting solved
+            solveVariables(matrix, i = this.equations[0].variables.length, ans = []) {
+                if (i == 0) return ans;
+                let j = this.equations[0].variables.length;
+                let k = i-1;
+
+                let sum = 0;
+                for (let m = j-1; m > k; m--) {
+                    sum += ans[m] * matrix[k][m];
+                }
+                
+                ans[k] = (matrix[k][j] - sum) / matrix[k][k];
+
+                return this.solveVariables(matrix, i-1, ans);
             }
 
             // https://en.wikipedia.org/wiki/Laplace_expansion
@@ -140,8 +166,7 @@
                     return (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
                 }
                 if (r >= matrix.length || k >= matrix.length) return det;
-                // splice matrix into smaller one
-                // js fucking passes by reference so we must do a stupid ass for loop
+
                 let mA = [];
                 for (let i = 0; i < matrix.length; i++) {
                     mA[i] = [];
@@ -177,10 +202,18 @@
 
         let eq1 = new Equation([2, 1, -3], -1);
         let eq2 = new Equation([-1, 3, 2], 12);
-        let eq3 = new Equation([3, 1, -3], 0)
+        let eq3 = new Equation([3, 1, -3], 0);
         let sys = new System([eq1, eq2, eq3]);
+        let sol = sys.solveMatrix();
+
         let text = "\\alpha = " + sys.toLatexEquations() + "A' = " + sys.toLatexMatrix(sys.getMatrix(true), true);
-        text += "\\\\ \\therefore " + sys.solveMatrix()[1];
+        text += "\\\\ \\therefore " + sol[1] + " \\\\ S = [";
+        sol[0].forEach(variable => {
+            text += new Fraction(variable).toLatex() + ", \\ ";
+        });
+        text = text.slice(0, -4);
+        text += "]";
+
         katex.render(text, document.getElementById('latex'), {
             throwOnError: false
         });
