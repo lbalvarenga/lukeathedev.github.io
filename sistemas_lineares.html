@@ -126,10 +126,10 @@
                 // find possible solutions
                 // get determinant
                 let detA = this.getDeterminant(this.getMatrix(true), 0, 0);
-                text += "\\det A' = " + detA + " \\therefore \\ system \\ is \\ " + (detA > 0 ? "solvable" : "unsolvable") + ". \\\\ ";
+                text += "\\det A' = " + detA + " \\therefore \\ system \\ is \\ " + (detA != 0 ? "solvable" : "unsolvable") + ". \\\\ ";
 
                 // solve if theres just 1 solution
-                if (detA <= 0) {
+                if (detA == 0) {
                     return [undefined, text];
                 }
 
@@ -224,7 +224,7 @@
             }
         }
 
-        let eq1 = new Equation([-1, 1, 2], 9);
+        let eq1 = new Equation([1, 1, 2], 9);
         let eq2 = new Equation([2, 4, -3], 1);
         let eq3 = new Equation([3, 6, -5], 0);
         let sys = new System([eq1, eq2, eq3]);
