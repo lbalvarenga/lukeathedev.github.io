@@ -176,7 +176,7 @@
                 for (let m = j-1; m > k; m--) {
                     sum += ans[m] * matrix[k][m];
                 }
-                
+
                 ans[k] = (matrix[k][j] - sum) / matrix[k][k];
 
                 return this.solveVariables(matrix, i-1, ans);
@@ -185,7 +185,7 @@
             // https://en.wikipedia.org/wiki/Laplace_expansion
             getDeterminant(matrix, r, k, det = 0) {
                 if (matrix.length != matrix[0].length) return undefined;
-                
+
                 if (matrix.length == 2) {
                     return (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
                 }
@@ -224,19 +224,22 @@
             }
         }
 
-        let eq1 = new Equation([2, 1, -3], -1);
-        let eq2 = new Equation([-1, 3, 2], 12);
-        let eq3 = new Equation([3, 1, -3], 0);
+        let eq1 = new Equation([-1, 1, 2], 9);
+        let eq2 = new Equation([2, 4, -3], 1);
+        let eq3 = new Equation([3, 6, -5], 0);
         let sys = new System([eq1, eq2, eq3]);
         let sol = sys.solveMatrix();
 
         let text = "\\alpha = " + sys.toLatexEquations() + "A' = " + sys.toLatexMatrix(sys.getMatrix(true), true);
-        text += "\\\\ \\therefore " + sol[1] + " \\\\ S = [";
-        sol[0].forEach(variable => {
+        text += "\\\\ \\therefore " + sol[1];
+        if (sol[0] != undefined) {
+            text += " \\\\ S = [";
+            sol[0].forEach(variable => {
             text += new Fraction(variable).toLatex() + ", \\ ";
-        });
-        text = text.slice(0, -4);
-        text += "]";
+            });
+            text = text.slice(0, -4);
+            text += "]";
+        }
 
         // for debug
         console.log(text);
