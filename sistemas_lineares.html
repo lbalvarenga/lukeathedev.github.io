@@ -99,13 +99,13 @@
                 this.equations.forEach(equation => {
                     text += equation.toLatex() + " \\\\ ";
                 });
-                return text.slice(0, -3) + "\\end{cases} \\\\";
+                return text.slice(0, -3) + "\\end{cases} \\\\ ";
             }
 
             toLatexMatrix(matrix, partial = false) {
                 let text = "\\def\\arraystretch{1.35} \\left[\\begin{array}{";
-                for (let i = 0; i < matrix.length; i++) { text += "c "}
-                text += (partial ? "" : "|") + " c}";
+                for (let i = 0; i < matrix.length; i++) { text += "c"}
+                text += (partial ? "" : "|") + "c}";
 
                 for (let i = 0; i < matrix.length; i++) {
                     for (let j = 0; j < matrix[i].length; j++) {
@@ -113,7 +113,7 @@
                     }
                     text = text.slice(0, -3) + " \\\\ ";
                 }
-                return text.slice(0, -3) + "\\end{array}\\right]";
+                return text.slice(0, -3) + "\\end{array}\\right] ";
             }
 
             // https://en.wikipedia.org/wiki/Gaussian_elimination
@@ -122,8 +122,6 @@
             solveMatrix() {
                 let a = this.getMatrix(false);
                 let text = "";
-
-                // TODO: Display floats as fractions instead
 
                 // find possible solutions
                 // get determinant
@@ -137,17 +135,23 @@
 
                 text += "Solution \\ to \\ A = " + this.toLatexMatrix(a) + " \\\\ ";
 
-                // if first element is zero do tricks (dunno if actually works)
                 if (a[0][0] == 0) {
-                    for (let j = 0; j < a[0].length; j++) {
-                        a[0][j] += a[1][j];
+                    // Find nonzero element in first column
+                    let i;
+                    for (i = 0; i < a.length; i++) {
+                        if (a[i][0] != 0) break;
                     }
-                    text += this.toLatexMatrix(a) + " \\\\ ";
+                    if (a[i][0] == 0) throw "ZeroColumnError";
+                    for (let j = 0; j < a[0].length; j++) {
+                        a[0][j] += a[i][j];
+                    }
+                    text += this.toLatexMatrix(a) + "L_1 \\leftarrow L_1 + L_" + (i+1) + " \\\\ ";
                 }
 
                 for (let m = 0; m < a.length; m++) {
                     for (let i = m + 1; i < a.length; i++) {
                         let k = a[i][m] / a[m][m];
+                        if (k == 0 || k == NaN) continue;
                         for (let j = m; j < a[i].length; j++) {
                             a[i][j] -= (k * a[m][j]);
                         }
@@ -181,6 +185,7 @@
             // https://en.wikipedia.org/wiki/Laplace_expansion
             getDeterminant(matrix, r, k, det = 0) {
                 if (matrix.length != matrix[0].length) return undefined;
+                
                 if (matrix.length == 2) {
                     return (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
                 }
@@ -232,6 +237,9 @@
         });
         text = text.slice(0, -4);
         text += "]";
+
+        // for debug
+        console.log(text);
 
         katex.render(text, document.getElementById('latex'), {
             throwOnError: false
