@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!-- KaTeX requires the use of the HTML5 doctype. Without it, KaTeX may not render properly -->
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css"
+        integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js"
+        integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O"
+        crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/contrib/auto-render.min.js"
+        integrity="sha384-yACMu8JWxKzSp/C1YV86pzGiQ/l1YUfE8oPuahJQxzehAjEt2GiQuy/BIvl9KyeF" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+
+    <script src="./js/fraction/fraction.min.js"></script>
+</head>
+
+<body>
+    <style>
+        body {
+            background-color:#1f1e1e;
+            color: white;
+            font-size: 1.5em;
+        }
+        h1 {
+            font-family: 'VT323', monospace;
+        }
+        #warning {
+            color: yellow;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 0.75em;
+        }
+        a {
+            text-decoration: none;
+            color: #00dda6;
+        }
+        a:hover {
+            color: #00fabb;
+        }
+        a:active {
+            font-size: 0.95em;
+        }
+        .base{
+            margin-bottom: 0.75em;
+            color: #00dda6;
+        }
+        .mord {
+            color: white;
+        }
+    </style>
+    <h1>Linear System Solver by <a href="https://twitter.com/lbalvarenga55" target="_blank">lbalvarenga55</a>.</h1>
+    <p id="warning">in order to use it, you must download this webpage and edit it where it says 'let eq = ...' to match your equations! i'll neaten it up soon</p>
+    <p id="latex"></p>
+
+    <script>
+        class Equation {
+            // variables is an array (x, y, z, ...)
+            constructor(variables, result) {
+                this.variables = variables;
+                this.result = result;
+            }
+
+            toLatex() {
+                let text = "";
+                let varLetter = "";
+                for (let i = 0; i < this.variables.length; i++) {
+                    if (i == 0 && this.variables[i] < 0) text += "-";
+                    if (i >= 3) varLetter = String.fromCharCode(0x7A - i);
+                    else        varLetter = String.fromCharCode(0x78 + i);
+
+                    let number = Math.abs(this.variables[i]);
+                    if (number == 1) number = "";
+                    else number = new Fraction(number).toLatex();
+                    text += number + varLetter + (this.variables[i + 1] > 0 ? " + " : " - ");
+                }
+                return text.slice(0, -3) + " = " + this.result;
+            }
+        }
+
+        class System {
+            // equations is an array (Equation(...), Equation(...), ...)
+            constructor(equations) {
+                this.equations = equations;
+
+                let eqSize = this.equations[0].variables.length;
+                this.equations.forEach(equation => {
+                    if (equation.variables.length != eqSize) throw "EquationVariableAmountMismatch";
+                });
+            }
+
+            toLatexEquations() {
+                let text = "\\begin{cases} ";
+                this.equations.forEach(equation => {
+                    text += equation.toLatex() + " \\\\ ";
+                });
+                return text.slice(0, -3) + "\\end{cases} \\\\ ";
+            }
+
+            toLatexMatrix(matrix, partial = false) {
+                let text = "\\def\\arraystretch{1.35} \\left[\\begin{array}{";
+                for (let i = 0; i < matrix.length; i++) { text += "c"}
+                text += (partial ? "" : "|") + "c}";
+
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        text += new Fraction(matrix[i][j]).toLatex() + " & "; //+parseFloat(matrix[i][j]).toFixed(3) + " & ";
+                    }
+                    text = text.slice(0, -3) + " \\\\ ";
+                }
+                return text.slice(0, -3) + "\\end{array}\\right] ";
+            }
+
+            // https://en.wikipedia.org/wiki/Gaussian_elimination
+            // returns values of variables (x, y, z, ...) and LaTeX matrices
+            // that go step by step
+            solveMatrix() {
+                let a = this.getMatrix(false);
+                let text = "";
+
+                // find possible solutions
+                // get determinant
+                let detA = this.getDeterminant(this.getMatrix(true), 0, 0);
+                text += "\\det A' = " + detA + " \\therefore \\ system \\ is \\ " + (detA != 0 ? "solvable" : "unsolvable") + ". \\\\ ";
+
+                // solve if theres just 1 solution
+                if (detA == 0) {
+                    return [undefined, text];
+                }
+
+                text += "Solution \\ to \\ A = " + this.toLatexMatrix(a) + " \\\\ ";
+
+                if (a[0][0] == 0) {
+                    // Find nonzero element in first column
+                    let i;
+                    for (i = 0; i < a.length; i++) {
+                        if (a[i][0] != 0) break;
+                    }
+                    if (a[i][0] == 0) throw "ZeroColumnError";
+                    for (let j = 0; j < a[0].length; j++) {
+                        a[0][j] += a[i][j];
+                    }
+                    text += this.toLatexMatrix(a) + "L_1 \\leftarrow L_1 + L_" + (i+1) + " \\\\ ";
+                }
+
+                for (let m = 0; m < a.length; m++) {
+                    for (let i = m + 1; i < a.length; i++) {
+                        let k = a[i][m] / a[m][m];
+                        if (k == 0 || k == NaN) continue;
+                        for (let j = m; j < a[i].length; j++) {
+                            a[i][j] -= (k * a[m][j]);
+                        }
+                        text += this.toLatexMatrix(a) + "L_" + (i+1) + "\\leftarrow L_" + (i+1);
+                        text += (k > 0 ? " - " : " + ") + new Fraction(k).abs().toLatex() + " \\cdot L_" + (m+1) + " \\\\ ";
+                    }
+                }
+
+                // Find variables
+                let answers = this.solveVariables(a);
+
+                return [answers, text];
+            }
+
+            // TODO: show how variables are getting solved
+            solveVariables(matrix, i = this.equations[0].variables.length, ans = []) {
+                if (i == 0) return ans;
+                let j = this.equations[0].variables.length;
+                let k = i-1;
+
+                let sum = 0;
+                for (let m = j-1; m > k; m--) {
+                    sum += ans[m] * matrix[k][m];
+                }
+
+                ans[k] = (matrix[k][j] - sum) / matrix[k][k];
+
+                return this.solveVariables(matrix, i-1, ans);
+            }
+
+            // https://en.wikipedia.org/wiki/Laplace_expansion
+            getDeterminant(matrix, r, k, det = 0) {
+                if (matrix.length != matrix[0].length) return undefined;
+
+                if (matrix.length == 2) {
+                    return (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
+                }
+                if (r >= matrix.length || k >= matrix.length) return det;
+
+                let mA = [];
+                for (let i = 0; i < matrix.length; i++) {
+                    mA[i] = [];
+                    for (let j = 0; j < matrix[0].length; j++) {
+                        mA[i][j] = matrix[i][j];
+                    }
+                }
+
+                mA.splice(r, 1);
+                for (let i = 0; i < mA.length; i++) {
+                    mA[i].splice(k, 1);
+                }
+
+                det += Math.pow(-1, k) * this.getDeterminant(mA, r, k) * matrix[r][k];
+                return this.getDeterminant(matrix, r, k+1, det);
+            }
+
+            getMatrix(partial) {
+                let matrix = new Array(this.equations.length);
+                for (let i = 0; i < this.equations.length; i++) {
+                    matrix[i] = new Array(this.equations[i].variables.length + (partial ? 0 : 1));
+                    for (let j = 0; j < this.equations[i].variables.length + (partial ? 0 : 1); j++) {
+                        if (this.equations[i].variables[j] == undefined && !partial) {
+                            matrix[i][j] = this.equations[i].result;
+                            continue;
+                        }
+                        matrix[i][j] = this.equations[i].variables[j];
+                    }
+                }
+                return matrix;
+            }
+        }
+
+        let eq1 = new Equation([1, 1, 2], 9);
+        let eq2 = new Equation([2, 4, -3], 1);
+        let eq3 = new Equation([3, 6, -5], 0);
+        let sys = new System([eq1, eq2, eq3]);
+        let sol = sys.solveMatrix();
+
+        let text = "\\alpha = " + sys.toLatexEquations() + "A' = " + sys.toLatexMatrix(sys.getMatrix(true), true);
+        text += "\\\\ \\therefore " + sol[1];
+        if (sol[0] != undefined) {
+            text += " \\\\ S = [";
+            sol[0].forEach(variable => {
+            text += new Fraction(variable).toLatex() + ", \\ ";
+            });
+            text = text.slice(0, -4);
+            text += "]";
+        }
+
+        // for debug
+        console.log(text);
+
+        katex.render(text, document.getElementById('latex'), {
+            throwOnError: false
+        });
+    </script>
+</body>
+
+</html>
