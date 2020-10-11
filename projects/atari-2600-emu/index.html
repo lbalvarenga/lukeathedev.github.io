@@ -10,8 +10,6 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
-    <!-- <link rel="stylesheet" href="./css/themes/lightmode.css"> -->
 </head>
 
 <body>
@@ -54,10 +52,20 @@
         The emulator is in pre-alpha. This means that most features are not currently working.
     </div>
 
+    <!-- TODO: Find a better tv frame image that isn't rough around the edges. -->
+    <div id="tv-wrapper">
+        <div id="tv-overlay">
+            <canvas id="tv-screen"></canvas>
+            <img id="tv-frame" src="./meta/tv-clipart.png">
+        </div>
+    </div>
 
-    <div id="tv-overlay">
-        <canvas id="tv-screen"></canvas>
-        <img id="tv-frame" src="./meta/tv-clipart.png">
+    <div class="jumbotron">
+        <h1 class="display-4">Progress Report</h1>
+        <p class="lead">As it turns out, emulating CPUs isn't exactly easy, let alone full systems, but hopefully (if I keep my pace up) in a
+            week or two the project should be complete. I'd say I'm about 30% done as of 2020-10-11.</p>
+        <hr class="my-4">
+        <p>You can check the progress <a href="https://github.com/lukeathedev/Atari2600EMU">here</a>.</p>
     </div>
 
     <style>
@@ -65,8 +73,14 @@
             height: 100vh;
         }
 
+        #tv-wrapper {
+            position: relative;
+
+        }
+
         #tv-overlay {
-            min-height: 40vh;
+            overflow: auto;
+            padding-bottom: 13.5%;
         }
 
         #tv-screen {
@@ -82,6 +96,7 @@
         }
     </style>
 
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
@@ -92,35 +107,7 @@
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
 
-    <script>
-        let CVOFFSET = $("#tv-screen").offset();
-
-        function alignCanvasOnTV() {
-            // CVHEIGHT TO OVERLAYHEIGHT = 0.7421236872812135
-            // CVWIDTH TO OVERLAYWIDTH = 0.6579352850539291
-
-            // Margins
-            // 
-
-            let frame = $("#tv-frame");
-            let cv = $("#tv-screen");
-            let cvoff = cv.offset();
-
-            cv.width(frame.width() * 0.6579);
-            cv.height(frame.height() * 0.7421);
-
-            // need work offset
-        }
-
-        // make canvas colorful
-        let cv = document.getElementById("tv-screen");
-        let ctx = cv.getContext("2d");
-        ctx.fillStyle = "blue";
-        ctx.fillRect(0, 0, cv.width, cv.height);
-
-        alignCanvasOnTV();
-        window.onresize = () => alignCanvasOnTV();
-    </script>
+    <script src="./static/js/layoutHandler.js"></script>
 </body>
 
 </html>
