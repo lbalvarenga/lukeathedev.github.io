@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="./media/favicon.png" type="image/x-icon">
+    <title>Chess2D</title>
+</head>
+
+<body>
+    <!-- TODO: fix styling and layout -->
+    <style>
+        html body {
+            text-align: center;
+            font-family: monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #17223A;
+            color: whitesmoke;
+        }
+
+        #wrapper {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            scrollbar-width: none;
+            overflow: scroll;
+        }
+
+        #canvas-container canvas {
+            flex: 1 0 75%;
+            border: 3px solid peru;
+            border-radius: 5px;
+        }
+
+        #debug-text {
+            flex: 1 0 100%;
+            min-height: 50px;
+            max-height: 200px;
+        }
+
+        #wrapper::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+
+    <h1>♟️ Chess2D</h1>
+    <div id="wrapper">
+        <div id="canvas-container">
+        </div>
+    </div>
+    <div id="debug-text"></div>
+
+    <script src="./js/Board.js"></script>
+    <script src="./js/Piece.js"></script>
+    <script src="./js/Utils.js"></script>
+    <script src="./js/main.js"></script>
+    <!-- p5js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"
+        integrity="sha512-b/htz6gIyFi3dwSoZ0Uv3cuv3Ony7EeKkacgrcVg8CMzu90n777qveu0PBcbZUA7TzyENGtU+qZRuFAkfqgyoQ=="
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
