@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 var board;
 
 function preload() {
@@ -12,9 +12,9 @@ function preload() {
     style.tileWhite = [94, 122, 130, 255];
 
     // loadImage is async
-    style.pieceSprite = loadImage("../media/pieces.png", () => {
-        board = new Board("rnbqkbnr/1ppppppp/8/p3P3/8/8/PPPP1PPP/R3K2R b KQkq - 0 2", style);
-        // board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
+    style.pieceSprite = loadImage("./media/pieces.png", () => {
+        // board = new Board("rnbqkbnr/1ppppppp/8/p3P3/8/8/PPPP1PPP/R3K2R b KQkq - 0 2", style);
+        board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
     });
 }
 
