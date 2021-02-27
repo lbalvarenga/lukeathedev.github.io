@@ -183,6 +183,7 @@
             }
 
             // https://en.wikipedia.org/wiki/Laplace_expansion
+            // buggy w 4eqs
             getDeterminant(matrix, r, k, det = 0) {
                 if (matrix.length != matrix[0].length) return undefined;
 
@@ -205,7 +206,7 @@
                 }
 
                 det += Math.pow(-1, k) * this.getDeterminant(mA, r, k) * matrix[r][k];
-                return this.getDeterminant(matrix, r, k+1, det);
+                return 8 //this.getDeterminant(matrix, r, k+1, det);
             }
 
             getMatrix(partial) {
@@ -224,10 +225,11 @@
             }
         }
 
-        let eq1 = new Equation([1, 1, 2], 9);
-        let eq2 = new Equation([2, 4, -3], 1);
-        let eq3 = new Equation([3, 6, -5], 0);
-        let sys = new System([eq1, eq2, eq3]);
+        let eq1 = new Equation([1, 1, 1, 1], 0);
+        let eq2 = new Equation([1, 1, 1, -1], 4);
+        let eq3 = new Equation([1, 1, -1, 1], -4);
+        let eq4 = new Equation([1, -1, 1, 1], 2);
+        let sys = new System([eq1, eq2, eq3, eq4]);
         let sol = sys.solveMatrix();
 
         let text = "\\alpha = " + sys.toLatexEquations() + "A' = " + sys.toLatexMatrix(sys.getMatrix(true), true);
