@@ -140,7 +140,7 @@ function draw() {
 
 function mousePressed() {
     // For debouncing
-    if (event.type != "touchstart") return true;
+    // if (event.type != "touchstart") return true;
 
     // Check screen bounds
     if (mouseX > width || mouseY > height) return true;
@@ -181,7 +181,7 @@ function mousePressed() {
 
 function mouseReleased() {
     // For debouncing
-    if (event.type != "touchend") return true;
+    // if (event.type != "touchend") return true;
 
     // Check screen bounds
     if (mouseX > width || mouseY > height) {

@@ -3,7 +3,6 @@
 // TODO: implement 50 move rule (pretty easy)
 // TODO: implement stalemate when there are only kings
 // TODO: remove king from capture list
-// TODO: fix en passant targeting on same side
 
 // TODO: implement chronometer
 // TODO: implement multiplayer

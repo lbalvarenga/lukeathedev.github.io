@@ -424,7 +424,7 @@ class Board {
     switch (piece.type) {
       case Piece.types.pawn:
         let allowedDist = 1;
-        let side; // TODO: implement en passant
+        let side;
 
         if (piece.side == Piece.sides.white) {
           side = -1; // If at starting position
@@ -461,7 +461,11 @@ class Board {
 
         if (pos.y == this.enPassantTarget.y - 1 * side) {
           if (abs(pos.x - this.enPassantTarget.x) == 1) {
-            moves.push(this.enPassantTarget.x + this.enPassantTarget.y * sz);
+            let epPiece = this.tiles[this.enPassantTarget.y + 1 * side][this.enPassantTarget.x];
+
+            if (epPiece.side != piece.side) {
+              moves.push(this.enPassantTarget.x + this.enPassantTarget.y * sz);
+            }
           }
         }
 
