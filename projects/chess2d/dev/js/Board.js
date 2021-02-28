@@ -4,6 +4,8 @@
 // TODO: implement stalemate when there are only kings
 // TODO: remove king from capture list
 
+// TODO: implement abort, draw, etc
+
 // TODO: implement chronometer
 // TODO: implement multiplayer
 
@@ -18,7 +20,8 @@ class Board {
         "boardRes": 2048,
         "tileBlack": [0, 0, 0, 255],
         "tileWhite": [255, 255, 255, 255],
-        "pieceSprite": null // Must be populated with an image
+        "pieceSprite": null, // Must be populated with an image
+        "inverted": false
     };
     fenString = "";
     tileImage = null;
@@ -28,13 +31,18 @@ class Board {
         "Q": false, // White queen side
         "k": false, // Black king side
         "q": false  // Black queen side
-    }
+    };
 
     // TODO: validate initial fen to set stuff like this
     isInCheck = {
         "white": false,
         "black": false
-    }
+    };
+    isCheckmated = {
+        "white": false,
+        "black": false
+    };
+    isStalemated = false;
 
     enPassantTarget = { "x": null, "y": null };
     halfmoves = 0;
@@ -65,7 +73,7 @@ class Board {
         let enPassantSet = false;
         let promotion = false;
         let checkmated = { "black": false, "white": false };
-        let stalemated = { "black": false, "white": false };
+        let stalemated = false;
 
         if (srcPiece.side != this.currentTurn) return false;
         if (!moves.includes(dst.x + dst.y * sz)) return false;
@@ -172,8 +180,8 @@ class Board {
 
             // If white has no legal moves = checkmate or stalemate
             if (wLegalMoves.length < 1) {
-                if (this.isInCheck.white) checkmated.white = true;
-                else stalemated.white = true;
+                if (this.isInCheck.white) this.isCheckmated.white = true;
+                else this.isStalemated = true
             }
 
             // Black must have performed a legal move
@@ -184,8 +192,8 @@ class Board {
 
             // If black has no legal moves = checkmate or stalemate
             if (bLegalMoves.length < 1) {
-                if (this.isInCheck.black) checkmated.black = true;
-                else stalemated.black = true;
+                if (this.isInCheck.black) this.isCheckmated.black = true;
+                else this.isStalemated = true;
             }
 
             // White must have performed a legal move
@@ -267,6 +275,9 @@ class Board {
         for (let y = 0; y < sz; y++) {
             for (let x = 0; x < sz; x++) {
                 let curPiece = this.tiles[y][x];
+
+                // If piece is of opposing side
+                if (curPiece.side == side) continue;
 
                 // If piece is knight
                 if (curPiece.type == Piece.types.knight) {
@@ -382,8 +393,9 @@ class Board {
         // Check intermediary castling square for attacks
         if (piece.type == Piece.types.king) {
             kingPos = this.getPiecePos(Piece.types.king, piece.side)[0];
+            
             // Queen side
-            let castlingAttacks = this.listChecks({ "x": 3, "y": kingPos.y }, kingPiece.side);
+            let castlingAttacks = this.listChecks({ "x": 3, "y": kingPos.y }, piece.side);
             if (castlingAttacks.length > 0) {
                 moves = moves.filter((e) => {
                     return e != kingPos.x - 2 + kingPos.y * sz;
@@ -391,7 +403,7 @@ class Board {
             }
 
             // King side
-            castlingAttacks = this.listChecks({ "x": 5, "y": kingPos.y }, kingPiece.side);
+            castlingAttacks = this.listChecks({ "x": 5, "y": kingPos.y }, piece.side);
             if (castlingAttacks.length > 0) {
                 moves = moves.filter((e) => {
                     return e != kingPos.x + 2 + kingPos.y * sz;

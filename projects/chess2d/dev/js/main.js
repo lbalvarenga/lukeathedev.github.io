@@ -7,11 +7,14 @@ function preload() {
     let style = Board.style;
 
     // Light theme
-    //style.tileBlack = [228, 187, 151, 255];
-    //style.tileWhite = [254, 245, 239, 255];
+    style.tileBlack = [228, 187, 151, 255];
+    style.tileWhite = [254, 245, 239, 255];
     // Dark theme
     style.tileBlack = [77, 99, 106, 255];
     style.tileWhite = [94, 122, 130, 255];
+
+    // White at bottom
+    style.inverted = false;
 
     // loadImage is async
     style.pieceSprite = loadImage("./media/pieces.png", () => {
@@ -20,16 +23,8 @@ function preload() {
 }
 
 function setup() {
-    // let sz = Utils.getRes(1 / 1, 0.5);
-    // let canvas = createCanvas(sz.x, sz.y);
-    // canvas.parent("#canvasContainer");
-
-    // TODO: centralize canvas (padding maybe)
-
-    let canvasContainer = document.getElementById("canvasContainer");
-    let sz = canvasContainer.clientWidth - 2 * parseInt(window.getComputedStyle(canvasContainer, null).paddingLeft);
-    if (sz > window.innerHeight * 0.65) sz = window.innerHeight * 0.65;
-    let canvas = createCanvas(sz, sz);
+    let sz = Utils.getRes(1 / 1, 0.65);
+    let canvas = createCanvas(sz.x, sz.y);
     canvas.parent("#canvasContainer");
 
     translate(0, 0);
@@ -154,8 +149,7 @@ function mousePressed() {
     selected = Utils.getCoords(mouseX, mouseY, width, sz);
     selected.piece = board.tiles[selected.y][selected.x];
 
-    // selectprev must update if
-    // selected changed and is not empty
+    // BUG: init will set piece even if it belongs to wrong side
 
     // init
     if (selectedPrev.x == null) {
@@ -247,11 +241,6 @@ function mouseReleased() {
 }
 
 function windowResized() {
-    // let sz = Utils.getRes(1 / 1, 0.5);
-    // resizeCanvas(sz.x, sz.y);
-
-    let canvasContainer = document.getElementById("canvasContainer");
-    let sz = canvasContainer.clientWidth - 2 * parseInt(window.getComputedStyle(canvasContainer, null).paddingLeft);
-    if (sz > window.innerHeight * 0.65) sz = window.innerHeight * 0.65;
-    resizeCanvas(sz, sz);
+    let sz = Utils.getRes(1 / 1, 0.65);
+    resizeCanvas(sz.x, sz.y);
 }

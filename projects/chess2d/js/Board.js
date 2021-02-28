@@ -7,7 +7,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // TODO: implement 50 move rule (pretty easy)
 // TODO: implement stalemate when there are only kings
 // TODO: remove king from capture list
-// TODO: fix en passant targeting on same side
+// TODO: implement abort, draw, etc
 // TODO: implement chronometer
 // TODO: implement multiplayer
 // TODO: make possible for bottom to be the other side (for multiplayer mostly)
@@ -38,6 +38,13 @@ class Board {
       "white": false,
       "black": false
     });
+
+    _defineProperty(this, "isCheckmated", {
+      "white": false,
+      "black": false
+    });
+
+    _defineProperty(this, "isStalemated", false);
 
     _defineProperty(this, "enPassantTarget", {
       "x": null,
@@ -73,10 +80,7 @@ class Board {
       "black": false,
       "white": false
     };
-    let stalemated = {
-      "black": false,
-      "white": false
-    };
+    let stalemated = false;
     if (srcPiece.side != this.currentTurn) return false;
     if (!moves.includes(dst.x + dst.y * sz)) return false;
     this.tiles[dst.y][dst.x] = srcPiece;
@@ -179,7 +183,7 @@ class Board {
       this.isInCheck.white = isInCheck; // If white has no legal moves = checkmate or stalemate
 
       if (wLegalMoves.length < 1) {
-        if (this.isInCheck.white) checkmated.white = true;else stalemated.white = true;
+        if (this.isInCheck.white) this.isCheckmated.white = true;else this.isStalemated = true;
       } // Black must have performed a legal move
 
 
@@ -188,7 +192,7 @@ class Board {
       this.isInCheck.black = isInCheck; // If black has no legal moves = checkmate or stalemate
 
       if (bLegalMoves.length < 1) {
-        if (this.isInCheck.black) checkmated.black = true;else stalemated.black = true;
+        if (this.isInCheck.black) this.isCheckmated.black = true;else this.isStalemated = true;
       } // White must have performed a legal move
 
 
@@ -268,7 +272,9 @@ class Board {
 
     for (let y = 0; y < sz; y++) {
       for (let x = 0; x < sz; x++) {
-        let curPiece = this.tiles[y][x]; // If piece is knight
+        let curPiece = this.tiles[y][x]; // If piece is of opposing side
+
+        if (curPiece.side == side) continue; // If piece is knight
 
         if (curPiece.type == Piece.types.knight) {
           let attMoves = this.listMovesPseudo(curPiece, {
@@ -386,7 +392,7 @@ class Board {
       let castlingAttacks = this.listChecks({
         "x": 3,
         "y": kingPos.y
-      }, kingPiece.side);
+      }, piece.side);
 
       if (castlingAttacks.length > 0) {
         moves = moves.filter(e => {
@@ -398,7 +404,7 @@ class Board {
       castlingAttacks = this.listChecks({
         "x": 5,
         "y": kingPos.y
-      }, kingPiece.side);
+      }, piece.side);
 
       if (castlingAttacks.length > 0) {
         moves = moves.filter(e => {
@@ -787,6 +793,7 @@ _defineProperty(Board, "style", {
   "boardRes": 2048,
   "tileBlack": [0, 0, 0, 255],
   "tileWhite": [255, 255, 255, 255],
-  "pieceSprite": null // Must be populated with an image
-
+  "pieceSprite": null,
+  // Must be populated with an image
+  "inverted": false
 });
