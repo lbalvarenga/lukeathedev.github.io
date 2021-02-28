@@ -24,8 +24,11 @@ function setup() {
     // let canvas = createCanvas(sz.x, sz.y);
     // canvas.parent("#canvasContainer");
 
+    // TODO: centralize canvas (padding maybe)
+
     let canvasContainer = document.getElementById("canvasContainer");
     let sz = canvasContainer.clientWidth - 2 * parseInt(window.getComputedStyle(canvasContainer, null).paddingLeft);
+    if (sz > window.innerHeight * 0.65) sz = window.innerHeight * 0.65;
     let canvas = createCanvas(sz, sz);
     canvas.parent("#canvasContainer");
 
@@ -47,8 +50,8 @@ var selected = {
 }
 
 var selectedPrev = {
-    "x": 0,
-    "y": 0,
+    "x": null,
+    "y": null,
     "piece": null
 }
 
@@ -137,7 +140,7 @@ function draw() {
 
 function mousePressed() {
     // For debouncing
-    // if (event.type != "touchstart") return true;
+    if (event.type != "touchstart") return true;
 
     // Check screen bounds
     if (mouseX > width || mouseY > height) return true;
@@ -155,30 +158,30 @@ function mousePressed() {
     // selected changed and is not empty
 
     // init
-    if (selectedPrev.piece == null) {
+    if (selectedPrev.x == null) {
         selectedPrev.x = selected.x;
         selectedPrev.y = selected.y;
         selectedPrev.piece = selected.piece;
     }
 
     // update
-    if (selected.piece.type != Piece.types.empty) {
+    else if (selected.piece.type != Piece.types.empty && selected.piece.side == board.currentTurn) {
         selectedPrev.x = selected.x;
         selectedPrev.y = selected.y;
         selectedPrev.piece = selected.piece;
     }
-    if (selectedPrev.piece.type == Piece.types.empty) {
-        mouse.sel = false;
+    else {
+        selectedPrev.piece = null;
     }
-    else mouse.sel = true
 
-
-    moves = board.listMovesLegal(selected.piece, { "x": selected.x, "y": selected.y });
+    if (selectedPrev.piece != null) {
+        moves = board.listMovesLegal(selectedPrev.piece, { "x": selectedPrev.x, "y": selectedPrev.y });
+    }
 }
 
 function mouseReleased() {
     // For debouncing
-    // if (event.type != "touchend") return true;
+    if (event.type != "touchend") return true;
 
     // Check screen bounds
     if (mouseX > width || mouseY > height) {
@@ -217,29 +220,27 @@ function mouseReleased() {
                     console.log(move);
                     console.log(fenString);
                 }
+
+                return true;
             }
         }
+
+        return false;
     }
 
-    if (selected.piece.type != Piece.types.empty) {
+    let hovering = { "x": 0, "y": 0, "piece": null };
+    hovering.x = Math.floor(mouseX * sz / width) % sz;
+    hovering.y = Math.floor(mouseY * sz / width) % sz;
+    hovering.piece = board.tiles[hovering.y][hovering.x];
 
-        let hovering = { "x": 0, "y": 0, "piece": null };
-        hovering.x = Math.floor(mouseX * sz / width) % sz;
-        hovering.y = Math.floor(mouseY * sz / width) % sz;
-        hovering.piece = board.tiles[hovering.y][hovering.x];
-
+    if (hovering.x != selected.x || hovering.y != selected.y) {
         makeMove(selected, hovering);
     }
-    else if (selectedPrev.x != selected.x || selectedPrev.y != selected.y) {
-        if (mouse.sel) {
-            makeMove(selectedPrev, selected);
+    else {
+        if (makeMove(selectedPrev, selected)) {
+            selectedPrev.piece = null;
         }
     }
-
-    // update
-    selectedPrev.x = selected.x;
-    selectedPrev.y = selected.y;
-    selectedPrev.piece = selected.piece;
 
     mouse.down = false;
     selected.piece = null;
@@ -251,5 +252,6 @@ function windowResized() {
 
     let canvasContainer = document.getElementById("canvasContainer");
     let sz = canvasContainer.clientWidth - 2 * parseInt(window.getComputedStyle(canvasContainer, null).paddingLeft);
+    if (sz > window.innerHeight * 0.65) sz = window.innerHeight * 0.65;
     resizeCanvas(sz, sz);
 }
