@@ -1,10 +1,15 @@
 // TODO: implement game history (pretty easy)
-// TODO: URGENT 2 castling rules
-// 1. The king is not currently in check.
-// 2. The king does not pass through a square that is attacked by an enemy piece.
+// TODO: implement promotion piece selection (currently only queen)
+// TODO: implement stalemate
+// TODO: implement 50 move rule (pretty easy)
 
 // TODO: implement chronometer
 // TODO: implement multiplayer
+
+// TODO: make possible for bottom to be the other side (for multiplayer mostly)
+
+// TODO: create posFromCoord and coordFromPos in Utils
+// and use them here instead of constantly doing maths
 
 class Board {
     static style = {
@@ -226,7 +231,7 @@ class Board {
         return piecePositions;
     }
 
-    listChecks(kingPos) {
+    listChecks(kingPos, side) {
         let moves = [];
         let sz = this.style.size;
         let kingPiece = this.tiles[kingPos.y][kingPos.x];
@@ -250,8 +255,6 @@ class Board {
                         }
                     }
                 }
-
-                // moves.push(0) // knight pos and king pos
             }
         }
 
@@ -259,18 +262,19 @@ class Board {
         let angles = [-135, -90, -45, 0, 45, 90, 135, 180];
 
         // BUG: kingPiece.side causes moves not on your turn to not show
-        let attAngles = Utils.rayCastC(kingPos, angles, this.tiles, 8, kingPiece.side);
+        let attAngles = Utils.rayCastC(kingPos, angles, this.tiles, 8, side);
 
         // for each cast ray at angle
         for (let i = 0; i < attAngles.length; i++) {
-            let attPiece = Utils.rayCastB(kingPos, [attAngles[i]], this.tiles, 8, kingPiece.side);
-            let attMoves = Utils.rayCastA(kingPos, [attAngles[i]], this.tiles, 8, kingPiece.side);
-            // list attacking piece moves
+            let attPiece = Utils.rayCastB(kingPos, [attAngles[i]], this.tiles, 8, side);
+            let attMoves = Utils.rayCastA(kingPos, [attAngles[i]], this.tiles, 8, side);
+            if (attPiece.length < 1 || attMoves.length < 1) continue;
+
+            // List attacking piece moves
             let piecePos = { "x": attPiece[0] % 8, "y": floor(attPiece[0] / 8) };
             let pieceAttacks = this.listMovesPseudo(this.tiles[piecePos.y][piecePos.x], piecePos);
 
-
-            // make sure it can reach king at some point
+            // Make sure it can reach king at some point
             if (!pieceAttacks.includes(kingPos.x + kingPos.y * sz)) continue;
 
             moves.push(attPiece[0]);
@@ -293,13 +297,11 @@ class Board {
     listMovesLegal(piece, pos) {
         if (piece.type == Piece.types.empty) return [];
 
-        // castling
-
         let sz = this.style.size;
         let kingPos = this.getPiecePos(Piece.types.king, piece.side)[0];
         let kingPiece = this.tiles[kingPos.y][kingPos.x];
 
-        let checkPositions = this.listChecks(kingPos);
+        let checkPositions = this.listChecks(kingPos, kingPiece.side);
         let moves = this.listMovesPseudo(piece, pos);
 
         // List pseudo moves
@@ -308,6 +310,12 @@ class Board {
 
             // If king is in check
             if (checkPositions.length > 0) {
+                // King can't castle
+                // Check if king is trying to castle
+                if (abs(newPos.x - pos.x) > 1) {
+                    delete moves[i];
+                }
+
                 if (piece.type == Piece.types.king) {
                     kingPos = newPos;
                     if (checkPositions.includes(moves[i])) {
@@ -324,7 +332,8 @@ class Board {
             }
             else if (piece.type == Piece.types.king) {
                 kingPos = newPos;
-                let possibleChecks = this.listChecks(newPos);
+                let possibleChecks = this.listChecks(newPos, kingPiece.side);
+
                 if (possibleChecks.length > 0) {
                     if (this.tiles[newPos.y][newPos.x].type == Piece.types.empty) {
                         if (piece.side != kingPiece.side) delete moves[i];
@@ -332,24 +341,39 @@ class Board {
                 }
             }
 
-            // move piece temporarily for validation purposes
+            // Move piece temporarily for validation purposes
             let pieceAtNewPos = this.tiles[newPos.y][newPos.x];
             this.tiles[newPos.y][newPos.x] = piece;
             this.tiles[pos.y][pos.x] = new Piece(Piece.types.empty, null, null);
 
             // Test if king gets checked
-            let possibleChecks = this.listChecks(kingPos);
+            let possibleChecks = this.listChecks(kingPos, kingPiece.side);
             if (possibleChecks.length > 0) delete moves[i];
 
-            // set them back
+            // Set them back
             this.tiles[newPos.y][newPos.x] = pieceAtNewPos;
             this.tiles[pos.y][pos.x] = piece;
         }
 
-        // TODO: check for checkmates
-        // naive idea:
-        // list all possible moves on board for each side
-        // if there are none well checkmate bro or stalemate if king is not checked
+        // Check intermediary castling square for attacks
+        if (piece.type == Piece.types.king) {
+            kingPos = this.getPiecePos(Piece.types.king, piece.side)[0];
+            // Queen side
+            let castlingAttacks = this.listChecks({ "x": kingPos.x - 1, "y": kingPos.y }, kingPiece.side);
+            if (castlingAttacks.length > 0) {
+                moves = moves.filter((e) => {
+                    return e != kingPos.x - 2 + kingPos.y * sz;
+                });
+            }
+
+            // King side
+            castlingAttacks = this.listChecks({ "x": kingPos.x + 1, "y": kingPos.y }, kingPiece.side);
+            if (castlingAttacks.length > 0) {
+                moves = moves.filter((e) => {
+                    return e != kingPos.x + 2 + kingPos.y * sz;
+                });
+            }
+        }
 
         return moves.filter((e, i, s) => {
             // Filter null and repeated elements
@@ -360,7 +384,6 @@ class Board {
     // https://permadi.com/1996/05/ray-casting-tutorial-6/
     // Takes Pos = {"x": a, "y": b}
     // returns possible moves as x + y * this.style.size array
-    // TODO: use array splice instead of delete
     listMovesPseudo(piece, pos) {
         let moves = [];
         let angles = [];
@@ -504,6 +527,7 @@ class Board {
         });
     }
 
+    // FEATURE: implement FEN string verification
     readFen() {
         let pos = 0; let row = 0;
         for (const c of this.fenString) {
@@ -653,7 +677,6 @@ class Board {
         this.fenString += this.canCastle.k ? "k" : "-";
         this.fenString += this.canCastle.q ? "q" : "-";
 
-        // TODO: add en passant
         if (this.enPassantTarget.x == null || this.enPassantTarget.y == null) {
             this.fenString += " -";
         }
