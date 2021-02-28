@@ -1,7 +1,6 @@
 // TODO: implement game history (pretty easy)
-// TODO: URGENT implement en passant
-// TODO: URGENT castling fix :
 // TODO: URGENT implement promotion
+// TODO: URGENT 2 castling rules
 // 1. The king is not currently in check.
 // 2. The king does not pass through a square that is attacked by an enemy piece.
 
@@ -31,6 +30,7 @@ class Board {
         "black": false
     }
 
+    enPassantTarget = { "x": null, "y": null };
     halfmoves = 0;
     fullmoves = 1;
 
@@ -56,6 +56,7 @@ class Board {
         let sz = this.style.size;
         let moves = this.listMovesLegal(srcPiece, src);
         let capture = false;
+        let enPassantSet = false;
 
         if (srcPiece.side != this.currentTurn) return false;
         if (!moves.includes(dst.x + dst.y * sz)) return false;
@@ -72,10 +73,28 @@ class Board {
 
         switch (srcPiece.type) {
             case Piece.types.pawn:
-                this.halfmoves = 0;
+                let side;
+                // TODO: implement en passant
+                if (srcPiece.side == Piece.sides.white) side = 1;
+                if (srcPiece.side == Piece.sides.black) side = -1;
+
+                // En Passant target
+                if (abs(src.y - dst.y) == 2) {
+                    this.enPassantTarget.x = src.x;
+                    this.enPassantTarget.y = dst.y + 1 * side;
+                    enPassantSet = true;
+                }
+
+                // Captures with En Passant
+                if (dst.y == this.enPassantTarget.y) {
+                    if (dst.x == this.enPassantTarget.x) {
+                        this.tiles[dst.y + 1 * side][dst.x] = new Piece(Piece.types.empty, null, null);
+                    }
+                }
 
                 // Promotion
 
+                this.halfmoves = 0;
                 break;
 
             case Piece.types.king:
@@ -115,6 +134,11 @@ class Board {
                 }
         }
 
+        if (!enPassantSet) {
+            this.enPassantTarget.x = null;
+            this.enPassantTarget.y = null;
+        }
+
         if (this.currentTurn == Piece.sides.white) {
             this.currentTurn = Piece.sides.black;
         }
@@ -134,6 +158,7 @@ class Board {
                 }
             }
         }
+
         if (this.listChecks(kingPos).length > 0) {
             algebraic += "+";
         }
@@ -172,8 +197,9 @@ class Board {
 
         // Find attacking angles
         let angles = [-135, -90, -45, 0, 45, 90, 135, 180];
-        // that this.currentTurn is weird to me idk why but it works tho
-        let attAngles = Utils.rayCastC(kingPos, angles, this.tiles, 8, this.currentTurn);
+        
+        // BUG: kingPiece.side causes moves not on your turn to not show
+        let attAngles = Utils.rayCastC(kingPos, angles, this.tiles, 8, kingPiece.side);
 
         // for each cast ray at angle
         for (let i = 0; i < attAngles.length; i++) {
@@ -207,8 +233,7 @@ class Board {
     listMovesLegal(piece, pos) {
         if (piece.type == Piece.types.empty) return [];
 
-        // BUG: if u select other king no moves are displayed if its not
-        // ur turn 
+        // castling
 
         let sz = this.style.size;
         let kingPos;
@@ -223,10 +248,10 @@ class Board {
                 }
             }
         }
+        let kingPiece = this.tiles[kingPos.y][kingPos.x];
 
         let checkPositions = this.listChecks(kingPos);
         let moves = this.listMovesPseudo(piece, pos);
-
 
         // TODO: use a single for loop maybe?
         // list pseudo moves
@@ -278,7 +303,7 @@ class Board {
                     let possibleChecks = this.listChecks(newPos);
                     if (possibleChecks.length > 0) {
                         if (this.tiles[newPos.y][newPos.x].type == Piece.types.empty) {
-                            if (piece.side == this.currentTurn) delete moves[i];
+                            if (piece.side != kingPiece.side) delete moves[i];
                         }
                     }
                 }
@@ -323,8 +348,6 @@ class Board {
             case Piece.types.pawn:
                 let allowedDist = 1;
                 let side;
-                // TODO: implement starting position
-                // TODO: implement taking
                 // TODO: implement en passant
                 if (piece.side == Piece.sides.white) {
                     side = -1;
@@ -359,6 +382,13 @@ class Board {
                         }
                     }
 
+                }
+
+                // En Passant
+                if (pos.y == this.enPassantTarget.y - 1 * side) {
+                    if (abs(pos.x - this.enPassantTarget.x) == 1) {
+                        moves.push(this.enPassantTarget.x + this.enPassantTarget.y * sz);
+                    }
                 }
                 break;
             case Piece.types.knight:
@@ -459,8 +489,6 @@ class Board {
             let side = (c == c.toUpperCase() ? Piece.sides.white : Piece.sides.black);
 
             if (pos + row * 8 > (this.style.size * this.style.size) - 1) {
-                // TODO: add en passant
-
                 let turn = this.fenString.match(/\s([wb])\s/gm)[0];
                 if (turn == " w ") turn = Piece.sides.white;
                 else if (turn == " b ") turn = Piece.sides.black;
@@ -487,6 +515,10 @@ class Board {
                             break;
                     }
                 }
+
+                let enPassant = this.fenString.match(/[a-h]{1}[0-9]{1}/gm);
+                if (enPassant == null) break;
+                this.enPassantTarget = Utils.fromAlgebraic(enPassant[0]);
                 break;
             }
 
@@ -600,7 +632,20 @@ class Board {
         this.fenString += this.canCastle.q ? "q" : "-";
 
         // TODO: add en passant
-        this.fenString += " - " + this.halfmoves;
+        if (this.enPassantTarget.x == null || this.enPassantTarget.y == null) {
+            this.fenString += " -";
+        }
+        else {
+            let enPassantAlgebraic = Utils.toAlgebraic(
+                new Piece(Piece.types.empty, null, null),
+                this.enPassantTarget, this.enPassantTarget,
+                false
+            );
+            this.fenString += " " + enPassantAlgebraic;
+        }
+
+
+        this.fenString += " " + this.halfmoves;
         this.fenString += " " + this.fullmoves;
         return this.fenString;
     }

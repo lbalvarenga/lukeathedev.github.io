@@ -100,9 +100,8 @@ class Utils {
                 Dy = Math.round(pos.y + i * sin(angle));
                 if (Dx >= sz || Dy >= sz || Dx < 0 || Dy < 0) break;
                 if (tiles[Dy][Dx].type != Piece.types.empty) {
-                    // damn shawty ok
-                    if (tiles[pos.y][pos.x].side == null) side = currentSide;
-                    else side = tiles[pos.y][pos.x].side;
+                    // damn shawty ok watch for side null
+                    side = tiles[pos.y][pos.x].side;
                     if (side != tiles[Dy][Dx].side) {
                         hitAngles.push(angle);
                     }
@@ -139,5 +138,12 @@ class Utils {
         algebraic += capture ? "x" : "";
         algebraic += dstName;
         return algebraic;
+    }
+
+    // TODO: make it handle takes and other stuff
+    static fromAlgebraic(string) {
+        let x = string.charCodeAt(0) - "a".charCodeAt(0);
+        let y = abs(Number(string.charAt(1)) - 8);
+        return { "x": x, "y": y };
     }
 }

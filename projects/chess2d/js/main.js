@@ -1,4 +1,4 @@
-var debug = false;
+var debug = true;
 var board;
 
 function preload() {
@@ -13,8 +13,9 @@ function preload() {
 
     // loadImage is async
     style.pieceSprite = loadImage("./media/pieces.png", () => {
-        // board = new Board("rnbqkbnr/1ppppppp/8/p3P3/8/8/PPPP1PPP/R3K2R b KQkq - 0 2", style);
-        board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
+        board = new Board("rnbqkbnr/1pp1pppp/8/p3P3/2Pp4/3P4/PP3PPP/R3K2R b KQkq c3 0 4", style);
+        // board = new Board("rnbqkbnr/ppp3pp/3p1p2/8/8/3PpPPN/PPP1P1BP/RNBQK2R w KQkq - 0 6", style);
+        // board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
     });
 }
 
@@ -144,11 +145,10 @@ function mouseReleased() {
             let move = board.validateMove(selected, hovering);
             if (move) {
                 moves = [];
+                document.getElementById("debug-text").innerHTML += move + " ";
                 if (debug) {
                     // TODO: implement capturing and check notation
                     let fenString = board.writeFen();
-                    document.getElementById("debug-text").innerHTML += move + " ";
-
                     console.log(move);
                     console.log(fenString);
                 }

@@ -32,6 +32,7 @@ class Piece {
     get shorthand() {
         let shortName = "";
         switch (this.type) {
+            case Piece.types.empty:
             case Piece.types.pawn:
                 shortName += "p";
                 break;
