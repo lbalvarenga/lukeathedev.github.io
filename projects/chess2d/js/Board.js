@@ -1,11 +1,11 @@
 // TODO: implement game history (pretty easy)
-// TODO: URGENT implement promotion
 // TODO: URGENT 2 castling rules
 // 1. The king is not currently in check.
 // 2. The king does not pass through a square that is attacked by an enemy piece.
 
 // TODO: implement chronometer
 // TODO: implement multiplayer
+
 class Board {
     static style = {
         "size": 8,
@@ -46,7 +46,7 @@ class Board {
     }
 
     // TODO: check for checkmates
-    // TODO: implement promotions
+    // TODO: implement promotion choice
     // Anything that affects pieces goes here
     validateMove(src, dst) {
         let srcPiece = this.tiles[src.y][src.x];
@@ -57,6 +57,8 @@ class Board {
         let moves = this.listMovesLegal(srcPiece, src);
         let capture = false;
         let enPassantSet = false;
+        let promotion = false;
+        let checkmated = { "black": false, "white": false };
 
         if (srcPiece.side != this.currentTurn) return false;
         if (!moves.includes(dst.x + dst.y * sz)) return false;
@@ -93,6 +95,14 @@ class Board {
                 }
 
                 // Promotion
+                // TODO: allow player to choose piece
+
+                // Since pawns can't go backwards
+                if (dst.y == 0 || dst.y == 7) {
+                    this.tiles[dst.y][dst.x] = new Piece(Piece.types.queen, srcPiece.side, this.style.pieceSprite);
+                    this.tiles[src.y][src.x] = new Piece(Piece.types.empty, null, null);
+                    promotion = true;
+                }
 
                 this.halfmoves = 0;
                 break;
@@ -144,26 +154,76 @@ class Board {
         }
         else this.currentTurn = Piece.sides.white;
 
-        let algebraic = Utils.toAlgebraic(srcPiece, src, dst, capture);
-
-        let kingPos;
+        // Determine if side is in check
         // Find active king
-        for (let y = 0; y < sz; y++) {
-            for (let x = 0; x < sz; x++) {
-                let curPiece = this.tiles[y][x];
-                if (curPiece.type == Piece.types.king) {
-                    if (curPiece.side == this.currentTurn) {
-                        kingPos = { "x": x, "y": y };
-                    }
+        let kingPos = this.getPiecePos(Piece.types.king, this.currentTurn)[0];
+        let isInCheck = this.listChecks(kingPos).length > 0 ? true : false;
+        let legalMoves;
+        if (this.currentTurn == Piece.sides.white) {
+            this.isInCheck.white = isInCheck;
+            // If white is still in check and has no legal moves = black checkmate
+            if (this.isInCheck.white) {
+                let wKingPos = this.getPiecePos(Piece.types.king, Piece.sides.white)[0];
+                let wKing = this.tiles[wKingPos.y][wKingPos.x];
+                legalMoves = this.listMovesLegal(wKing, wKingPos);
+                if (legalMoves.length < 1) {
+                    checkmated.white = true
+                    if (debug) console.log("BLACK CHECKMATE");
                 }
             }
+            this.isInCheck.black = false;
+        }
+        else {
+            this.isInCheck.black = isInCheck;
+
+            // If black is still in check and has no legal moves = white checkmate
+            if (this.isInCheck.black) {
+                let bKingPos = this.getPiecePos(Piece.types.king, Piece.sides.black)[0];
+                let bKing = this.tiles[bKingPos.y][bKingPos.x];
+                legalMoves = this.listMovesLegal(bKing, bKingPos);
+                if (legalMoves.length < 1) {
+                    checkmated.black = true;
+                    if (debug) console.log("WHITE CHECKMATE");
+                }
+            }
+            this.isInCheck.white = false;
         }
 
-        if (this.listChecks(kingPos).length > 0) {
+        let algebraic = Utils.toAlgebraic(srcPiece, src, dst, capture);
+
+        if (promotion) {
+            // TODO: implement different pieces
+            if (srcPiece.side == Piece.sides.white) algebraic += "Q";
+            else algebraic += "q";
+        }
+
+        if (checkmated.white) {
+            algebraic += "# 0-1";
+        }
+        else if (checkmated.black) {
+            algebraic += "# 1-0";
+        }
+        else if (isInCheck) {
             algebraic += "+";
         }
 
         return algebraic;
+    }
+
+    getPiecePos(pieceType, pieceSide) {
+        let sz = this.style.size
+        let piecePositions = [];
+        for (let y = 0; y < sz; y++) {
+            for (let x = 0; x < sz; x++) {
+                let curPiece = this.tiles[y][x];
+                if (curPiece.type == pieceType) {
+                    if (curPiece.side == pieceSide) {
+                        piecePositions.push({ "x": x, "y": y });
+                    }
+                }
+            }
+        }
+        return piecePositions;
     }
 
     listChecks(kingPos) {
@@ -197,7 +257,7 @@ class Board {
 
         // Find attacking angles
         let angles = [-135, -90, -45, 0, 45, 90, 135, 180];
-        
+
         // BUG: kingPiece.side causes moves not on your turn to not show
         let attAngles = Utils.rayCastC(kingPos, angles, this.tiles, 8, kingPiece.side);
 
@@ -236,31 +296,18 @@ class Board {
         // castling
 
         let sz = this.style.size;
-        let kingPos;
-        // Find active king
-        for (let y = 0; y < sz; y++) {
-            for (let x = 0; x < sz; x++) {
-                let curPiece = this.tiles[y][x];
-                if (curPiece.type == Piece.types.king) {
-                    if (curPiece.side == piece.side) {
-                        kingPos = { "x": x, "y": y };
-                    }
-                }
-            }
-        }
+        let kingPos = this.getPiecePos(Piece.types.king, piece.side)[0];
         let kingPiece = this.tiles[kingPos.y][kingPos.x];
 
         let checkPositions = this.listChecks(kingPos);
         let moves = this.listMovesPseudo(piece, pos);
 
-        // TODO: use a single for loop maybe?
-        // list pseudo moves
-        // remove those that match check positions
-        // if in check
-        if (checkPositions.length > 0) {
-            for (let i = 0; i < moves.length; i++) {
-                let newPos = { "x": moves[i] % 8, "y": floor(moves[i] / 8) };
+        // List pseudo moves
+        for (let i = 0; i < moves.length; i++) {
+            let newPos = { "x": moves[i] % 8, "y": floor(moves[i] / 8) };
 
+            // If king is in check
+            if (checkPositions.length > 0) {
                 if (piece.type == Piece.types.king) {
                     kingPos = newPos;
                     if (checkPositions.includes(moves[i])) {
@@ -274,54 +321,29 @@ class Board {
                 else if (!checkPositions.includes(moves[i])) {
                     delete moves[i];
                 }
-
-                // move piece temporarily for validation purposes
-                let pieceAtNewPos = this.tiles[newPos.y][newPos.x];
-                this.tiles[newPos.y][newPos.x] = piece;
-                this.tiles[pos.y][pos.x] = new Piece(Piece.types.empty, null, null);
-
-                // Test if king gets checked
-                let possibleChecks = this.listChecks(kingPos);
-                if (possibleChecks.length > 0) delete moves[i];
-
-                // set them back
-                this.tiles[newPos.y][newPos.x] = pieceAtNewPos;
-                this.tiles[pos.y][pos.x] = piece;
             }
-        }
-        // if not in check
-        else {
-            // for every move
-            // see if it causes king to get checked
-            // disallow that move
-            for (let i = 0; i < moves.length; i++) {
-                let newPos = { "x": moves[i] % 8, "y": floor(moves[i] / 8) };
-
-                // if king is moving
-                if (piece.type == Piece.types.king) {
-                    kingPos = newPos;
-                    let possibleChecks = this.listChecks(newPos);
-                    if (possibleChecks.length > 0) {
-                        if (this.tiles[newPos.y][newPos.x].type == Piece.types.empty) {
-                            if (piece.side != kingPiece.side) delete moves[i];
-                        }
+            else if (piece.type == Piece.types.king) {
+                kingPos = newPos;
+                let possibleChecks = this.listChecks(newPos);
+                if (possibleChecks.length > 0) {
+                    if (this.tiles[newPos.y][newPos.x].type == Piece.types.empty) {
+                        if (piece.side != kingPiece.side) delete moves[i];
                     }
                 }
-                // if piece exposes king
-
-                // move piece temporarily for validation purposes
-                let pieceAtNewPos = this.tiles[newPos.y][newPos.x];
-                this.tiles[newPos.y][newPos.x] = piece;
-                this.tiles[pos.y][pos.x] = new Piece(Piece.types.empty, null, null);
-
-                // Test if king gets checked
-                let possibleChecks = this.listChecks(kingPos);
-                if (possibleChecks.length > 0) delete moves[i];
-
-                // set them back
-                this.tiles[newPos.y][newPos.x] = pieceAtNewPos;
-                this.tiles[pos.y][pos.x] = piece;
             }
+
+            // move piece temporarily for validation purposes
+            let pieceAtNewPos = this.tiles[newPos.y][newPos.x];
+            this.tiles[newPos.y][newPos.x] = piece;
+            this.tiles[pos.y][pos.x] = new Piece(Piece.types.empty, null, null);
+
+            // Test if king gets checked
+            let possibleChecks = this.listChecks(kingPos);
+            if (possibleChecks.length > 0) delete moves[i];
+
+            // set them back
+            this.tiles[newPos.y][newPos.x] = pieceAtNewPos;
+            this.tiles[pos.y][pos.x] = piece;
         }
 
         // TODO: check for checkmates
@@ -493,7 +515,7 @@ class Board {
                 if (turn == " w ") turn = Piece.sides.white;
                 else if (turn == " b ") turn = Piece.sides.black;
 
-                let numbers = this.fenString.match(/\s([\d])/gm);
+                let numbers = this.fenString.match(/\s([\d]+)/gm);
                 this.currentTurn = turn;
                 this.halfmoves = Number(numbers[0]);
                 this.fullmoves = Number(numbers[1]);

@@ -16,6 +16,13 @@ class Piece {
     side;
     image;
 
+    constructor(type, side, sprite) {
+        this.type = type;
+        this.side = side;
+
+        this.getImage(sprite);
+    }
+
     // this should be edited to fit your sprite
     getImage(sprite) {
         if (this.type == Piece.types.empty) {
@@ -58,12 +65,5 @@ class Piece {
         }
 
         return shortName;
-    }
-
-    constructor(type, side, sprite) {
-        this.type = type;
-        this.side = side;
-
-        this.getImage(sprite);
     }
 }
