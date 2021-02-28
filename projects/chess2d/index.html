@@ -8,98 +8,68 @@
 
     <link rel="shortcut icon" href="./media/favicon.png" type="image/x-icon">
     <title>Chess2D</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 </head>
 
 <body>
-    <!-- TODO: fix styling and layout -->
+    <!-- TODO: add algebraic coords next to board -->
+
     <style>
-        html body {
-            font-family: monospace;
-            font-size: 1.5em;
-            color: white;
-            background-color: rgb(23, 42, 59);
-
-            text-align: center;
-            margin: 0;
-            padding: 0;
+        #canvasContainer canvas {
+            border-radius: 10px;
         }
 
-        body {
-            width: 100%;
-            position: fixed;
-        }
-
-        #wrapper {
-            margin-top: 25px;
-            display: flex;
-            flex-wrap: wrap;
+        .list-group {
+            display: flex !important;
+            flex-flow: row wrap;
             justify-content: center;
-            align-items: center;
-            scrollbar-width: none;
-            overflow: scroll;
-        }
-
-        #canvas-container canvas {
-            flex: 1 0 75%;
-            border: 3px solid peru;
-            border-radius: 5px;
-            position: relative;
-        }
-
-        #debug-text {
-            flex: 1 0 100%;
-            text-align: center;
-            width: 75%;
-            min-height: 50px;
-            max-height: 200px;
-            margin-left: 12.5%;
-        }
-
-        #debug-text span {
-            font-size: 1.5em;
-        }
-
-        .m-white {
-            color: white;
-            text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
-        }
-
-        .m-black {
-            color: black;
-            font-size: 0.95em;
-            text-shadow: -1px 1px 0 white, 1px 1px 0 white, 1px -1px 0 white, -1px -1px 0 white;
-        }
-
-        #wrapper::-webkit-scrollbar {
-            display: none;
-        }
-
-        a {
-            text-decoration: none;
-            color: greenyellow;
-        }
-
-        a:hover {
-            color: rgb(206, 255, 132);
         }
     </style>
 
-    <h1>♟️ Chess2D</h1>
-    <div id="wrapper">
-        <div id="canvas-container">
+    <div class="container my-4">
+        <div class="jumbotron">
+            <h1 class="display-4">
+                ♟️ Chess2D
+            </h1>
+            <p class="lead">Work in progress UI redesign</p>
+            <hr class="my-4">
         </div>
     </div>
-    <div id="debug-text"></div>
 
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                Game stats
+            </div>
+            <div class="col-md-7" id="canvasContainer">
+            </div>
+            <div class="col">
+                Captures
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex col-xl-12">
+        <ul class="list-group list-group-horizontal mx-auto justify-content-center px-2" id="moveList">
+        </ul>
+    </div>
+
+
+    <style>
+        #wrapper canvas {
+            border-radius: 10px;
+        }
+    </style>
     <!-- <script type="text/javascript">
         window.onerror = function (msg, url, line) {
             alert(line + "; " + msg + "; @ " + url);
         }
     </script> -->
 
-    <script>
-
-    </script>
+    <!-- TODO: fix touch and mouseXY mismatch on IOS 12 Safari -->
 
     <script src="./js/Board.js"></script>
     <script src="./js/Piece.js"></script>
@@ -115,6 +85,11 @@
     <!-- p5js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"
         integrity="sha512-b/htz6gIyFi3dwSoZ0Uv3cuv3Ony7EeKkacgrcVg8CMzu90n777qveu0PBcbZUA7TzyENGtU+qZRuFAkfqgyoQ=="
+        crossorigin="anonymous"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
         crossorigin="anonymous"></script>
 </body>
 

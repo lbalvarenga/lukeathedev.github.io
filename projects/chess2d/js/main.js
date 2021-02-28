@@ -18,19 +18,29 @@ function preload() {
 }
 
 function setup() {
-  let sz = Utils.getRes(1 / 1, 0.75);
-  let canvas = createCanvas(sz.x, sz.y);
-  canvas.parent("#canvas-container");
+  // let sz = Utils.getRes(1 / 1, 0.5);
+  // let canvas = createCanvas(sz.x, sz.y);
+  // canvas.parent("#canvasContainer");
+  let canvasContainer = document.getElementById("canvasContainer");
+  let sz = canvasContainer.clientWidth - 2 * parseInt(window.getComputedStyle(canvasContainer, null).paddingLeft);
+  let canvas = createCanvas(sz, sz);
+  canvas.parent("#canvasContainer");
   translate(0, 0);
 } // Previous x and y
 
 
 var mouse = {
   "down": false,
+  "sel": false,
   "pX": 0,
   "pY": 0
 };
 var selected = {
+  "x": 0,
+  "y": 0,
+  "piece": null
+};
+var selectedPrev = {
   "x": 0,
   "y": 0,
   "piece": null
@@ -116,53 +126,74 @@ function draw() {
 }
 
 function mousePressed() {
-  if (mouseX > width || mouseY > height) return;
-  if (mouseX < 0 || mouseY < 0) return;
+  // For debouncing
+  // if (event.type != "touchstart") return true;
+  // Check screen bounds
+  if (mouseX > width || mouseY > height) return true;
+  if (mouseX < 0 || mouseY < 0) return true;
   mouse.down = true;
   mouse.pX = mouseX;
   mouse.pY = mouseY;
   let sz = board.style.size;
   selected = Utils.getCoords(mouseX, mouseY, width, sz);
-  selected.piece = board.tiles[selected.y][selected.x];
+  selected.piece = board.tiles[selected.y][selected.x]; // selectprev must update if
+  // selected changed and is not empty
+  // init
+
+  if (selectedPrev.piece == null) {
+    selectedPrev.x = selected.x;
+    selectedPrev.y = selected.y;
+    selectedPrev.piece = selected.piece;
+  } // update
+
+
+  if (selected.piece.type != Piece.types.empty) {
+    selectedPrev.x = selected.x;
+    selectedPrev.y = selected.y;
+    selectedPrev.piece = selected.piece;
+  }
+
+  if (selectedPrev.piece.type == Piece.types.empty) {
+    mouse.sel = false;
+  } else mouse.sel = true;
+
   moves = board.listMovesLegal(selected.piece, {
     "x": selected.x,
     "y": selected.y
   });
-  return;
 }
 
 function mouseReleased() {
-  mouse.down = false;
-
+  // For debouncing
+  // if (event.type != "touchend") return true;
+  // Check screen bounds
   if (mouseX > width || mouseY > height) {
+    mouse.down = false;
     selected.piece = null;
     return;
   }
 
   if (mouseX < 0 || mouseY < 0) {
+    mouse.down = false;
     selected.piece = null;
     return;
   }
 
-  if (selected.piece.type != Piece.types.empty) {
-    let sz = board.style.size;
-    let hovering = {
-      "x": 0,
-      "y": 0,
-      "piece": null
-    };
-    hovering.x = Math.floor(mouseX * sz / width) % sz;
-    hovering.y = Math.floor(mouseY * sz / width) % sz;
-    hovering.piece = board.tiles[hovering.y][hovering.x];
+  let sz = board.style.size; // src and dst must contain x, y and piece
 
-    if (hovering.x != selected.x || hovering.y != selected.y) {
-      let move = board.validateMove(selected, hovering);
+  function makeMove(src, dst) {
+    if (src.x != dst.x || src.y != dst.y) {
+      let move = board.validateMove(src, dst);
 
       if (move) {
-        moves = []; // Current turn is not the previous turn (wow)
+        moves = [];
+        let moveContainer = document.getElementById("moveList"); // Current turn is not the previous turn (wow)
 
-        let moveColor = board.currentTurn == Piece.sides.white ? "m-black" : "m-white";
-        document.getElementById("debug-text").innerHTML += "<span class=\"" + moveColor + "\">" + move + "</span> ";
+        if (board.currentTurn == Piece.sides.black) {
+          moveContainer.innerHTML += "<li class=\"list-group-item\">" + move + "</li>";
+        } else {
+          moveContainer.innerHTML += "<li class=\"list-group-item\"><strong>" + move + "</strong></li>";
+        }
 
         if (debug) {
           // TODO: implement capturing and check notation
@@ -174,11 +205,34 @@ function mouseReleased() {
     }
   }
 
+  if (selected.piece.type != Piece.types.empty) {
+    let hovering = {
+      "x": 0,
+      "y": 0,
+      "piece": null
+    };
+    hovering.x = Math.floor(mouseX * sz / width) % sz;
+    hovering.y = Math.floor(mouseY * sz / width) % sz;
+    hovering.piece = board.tiles[hovering.y][hovering.x];
+    makeMove(selected, hovering);
+  } else if (selectedPrev.x != selected.x || selectedPrev.y != selected.y) {
+    if (mouse.sel) {
+      makeMove(selectedPrev, selected);
+    }
+  } // update
+
+
+  selectedPrev.x = selected.x;
+  selectedPrev.y = selected.y;
+  selectedPrev.piece = selected.piece;
+  mouse.down = false;
   selected.piece = null;
-  return;
 }
 
 function windowResized() {
-  let sz = Utils.getRes(1 / 1, 0.75);
-  resizeCanvas(sz.x, sz.y);
+  // let sz = Utils.getRes(1 / 1, 0.5);
+  // resizeCanvas(sz.x, sz.y);
+  let canvasContainer = document.getElementById("canvasContainer");
+  let sz = canvasContainer.clientWidth - 2 * parseInt(window.getComputedStyle(canvasContainer, null).paddingLeft);
+  resizeCanvas(sz, sz);
 }

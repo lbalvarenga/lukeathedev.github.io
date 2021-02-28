@@ -7,6 +7,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 // TODO: implement 50 move rule (pretty easy)
 // TODO: implement stalemate when there are only kings
 // TODO: remove king from capture list
+// TODO: fix en passant targeting on same side
 // TODO: implement chronometer
 // TODO: implement multiplayer
 // TODO: make possible for bottom to be the other side (for multiplayer mostly)
