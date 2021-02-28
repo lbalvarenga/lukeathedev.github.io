@@ -334,13 +334,13 @@ class Board {
 
             // If king is in check
             if (checkPositions.length > 0) {
-                // King can't castle
-                // Check if king is trying to castle
-                if (abs(newPos.x - pos.x) > 1) {
-                    delete moves[i];
-                }
-
                 if (piece.type == Piece.types.king) {
+                    // King can't castle
+                    // Check if king is trying to castle
+                    if (abs(newPos.x - pos.x) > 1) {
+                        delete moves[i];
+                    }
+
                     kingPos = newPos;
                     if (checkPositions.includes(moves[i])) {
                         // if king is not capturing attacking piece

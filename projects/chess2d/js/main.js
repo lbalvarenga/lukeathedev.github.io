@@ -1,4 +1,4 @@
-var debug = false;
+var debug = true;
 var board;
 
 // TODO: improve game appearance
@@ -15,7 +15,8 @@ function preload() {
 
     // loadImage is async
     style.pieceSprite = loadImage("./media/pieces.png", () => {
-        board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
+        // board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
+        board = new Board("r1bqkbnr/pppppppp/8/8/3nP3/N2P4/PPP2PPP/R1BQKBNR b KQkq - 2 3", style);
     });
 }
 
