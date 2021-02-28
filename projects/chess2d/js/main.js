@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 var board;
 
 function preload() {
@@ -13,8 +13,7 @@ function preload() {
 
     // loadImage is async
     style.pieceSprite = loadImage("./media/pieces.png", () => {
-        board = new Board("rn2kbnr/ppp1pppp/8/1b1Q3q/8/NPP1P3/P2P1PPP/R1B1KBNR b KQkq - 0 91", style);
-        // board = new Board("rnb1kbnr/ppp1pppp/8/1N1Q3q/8/4P3/PPPP1PPP/R1B1KBNR w KQkq - 5 7", style);
+        board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
     });
 }
 
