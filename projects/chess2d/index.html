@@ -24,6 +24,11 @@
             padding: 0;
         }
 
+        body {
+            width: 100%;
+            position: fixed;
+        }
+
         #wrapper {
             margin-top: 25px;
             display: flex;
@@ -38,6 +43,7 @@
             flex: 1 0 75%;
             border: 3px solid peru;
             border-radius: 5px;
+            position: relative;
         }
 
         #debug-text {
@@ -85,10 +91,27 @@
     </div>
     <div id="debug-text"></div>
 
+    <!-- <script type="text/javascript">
+        window.onerror = function (msg, url, line) {
+            alert(line + "; " + msg + "; @ " + url);
+        }
+    </script> -->
+
+    <script>
+
+    </script>
+
     <script src="./js/Board.js"></script>
     <script src="./js/Piece.js"></script>
     <script src="./js/Utils.js"></script>
     <script src="./js/main.js"></script>
+
+    <!-- For dev purposes -->
+    <!-- <script src="./dev/js/Board.js"></script>
+    <script src="./dev/js/Piece.js"></script>
+    <script src="./dev/js/Utils.js"></script>
+    <script src="./dev/js/main.js"></script> -->
+
     <!-- p5js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"
         integrity="sha512-b/htz6gIyFi3dwSoZ0Uv3cuv3Ony7EeKkacgrcVg8CMzu90n777qveu0PBcbZUA7TzyENGtU+qZRuFAkfqgyoQ=="
