@@ -86,6 +86,7 @@ class Utils {
         return result;
     }
 
+    // Returns angles that contain pieces of other side
     static rayCastC(pos, angles, tiles, maxDist, currentSide) {
         let result = [];
         angleMode(DEGREES);

@@ -1,6 +1,8 @@
 var debug = false;
 var board;
 
+// TODO: improve game appearance
+
 function preload() {
     let style = Board.style;
 
@@ -46,12 +48,18 @@ function draw() {
     let sz = board.style.size;
     let tileWidth = min(width, height) / sz;
 
-    noStroke();
-    for (const move of moves) {
-        let x = move % 8;
-        let y = (move - (move % 8)) / 8;
-        fill([160, 130, 30, 60]);
-        square(x * tileWidth, y * tileWidth, tileWidth);
+    if (board.isInCheck.white || board.isInCheck.black) {
+        let side = board.currentTurn == Piece.sides.white ? Piece.sides.white : Piece.sides.black;
+        let kingPos = board.getPiecePos(Piece.types.king, side)[0];
+        //fill([150, 50, 0, 170]);
+        fill([0, 0, 0, 0]);
+        stroke([255, 40, 40, 255]);
+        strokeCap(ROUND);
+        strokeWeight(2);
+        square(kingPos.x * tileWidth + 4, kingPos.y * tileWidth + 4, tileWidth - 8);
+
+        // let center = tileWidth / 2;
+        // circle(kingPos.x * tileWidth + center, kingPos.y * tileWidth + center, tileWidth);
     }
 
     for (let y = 0; y < sz; y++) {
@@ -77,12 +85,6 @@ function draw() {
         }
     }
 
-    if (mouse.down && selected.piece.type != Piece.types.empty) {
-        imageMode(CENTER);
-        image(selected.piece.image, mouseX, mouseY, tileWidth, tileWidth);
-        imageMode(CORNER);
-    }
-
     if (debug) {
         if (mouse.down) {
             noStroke();
@@ -101,6 +103,21 @@ function draw() {
             fill([0, 255, 0, 60]);
             circle(mouseX, mouseY, width / 20);
         }
+    }
+
+    noStroke();
+    for (const move of moves) {
+        let x = move % 8;
+        let y = (move - (move % 8)) / 8;
+        fill([150, 150, 150, 255]);
+        let center = tileWidth / 2;
+        circle(x * tileWidth + center, y * tileWidth + center, tileWidth / 6);
+    }
+
+    if (mouse.down && selected.piece.type != Piece.types.empty) {
+        imageMode(CENTER);
+        image(selected.piece.image, mouseX, mouseY, tileWidth, tileWidth);
+        imageMode(CORNER);
     }
 }
 
@@ -143,7 +160,9 @@ function mouseReleased() {
             let move = board.validateMove(selected, hovering);
             if (move) {
                 moves = [];
-                document.getElementById("debug-text").innerHTML += move + " ";
+                // Current turn is not the previous turn (wow)
+                let moveColor = board.currentTurn == Piece.sides.white ? "m-black" : "m-white";
+                document.getElementById("debug-text").innerHTML += "<span class=\"" + moveColor + "\">" + move + "</span> ";
                 if (debug) {
                     // TODO: implement capturing and check notation
                     let fenString = board.writeFen();

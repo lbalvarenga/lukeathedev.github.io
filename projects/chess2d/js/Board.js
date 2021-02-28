@@ -1,7 +1,8 @@
 // TODO: implement game history (pretty easy)
 // TODO: implement promotion piece selection (currently only queen)
-// TODO: implement stalemate
 // TODO: implement 50 move rule (pretty easy)
+// TODO: implement stalemate when there are only kings
+// TODO: remove king from capture list
 
 // TODO: implement chronometer
 // TODO: implement multiplayer
@@ -64,6 +65,7 @@ class Board {
         let enPassantSet = false;
         let promotion = false;
         let checkmated = { "black": false, "white": false };
+        let stalemated = { "black": false, "white": false };
 
         if (srcPiece.side != this.currentTurn) return false;
         if (!moves.includes(dst.x + dst.y * sz)) return false;
@@ -163,34 +165,30 @@ class Board {
         // Find active king
         let kingPos = this.getPiecePos(Piece.types.king, this.currentTurn)[0];
         let isInCheck = this.listChecks(kingPos).length > 0 ? true : false;
-        let legalMoves;
+        let wLegalMoves = this.listAllMovesLegal(Piece.sides.white);
+        let bLegalMoves = this.listAllMovesLegal(Piece.sides.black);
         if (this.currentTurn == Piece.sides.white) {
             this.isInCheck.white = isInCheck;
-            // If white is still in check and has no legal moves = black checkmate
-            if (this.isInCheck.white) {
-                let wKingPos = this.getPiecePos(Piece.types.king, Piece.sides.white)[0];
-                let wKing = this.tiles[wKingPos.y][wKingPos.x];
-                legalMoves = this.listMovesLegal(wKing, wKingPos);
-                if (legalMoves.length < 1) {
-                    checkmated.white = true
-                    if (debug) console.log("BLACK CHECKMATE");
-                }
+
+            // If white has no legal moves = checkmate or stalemate
+            if (wLegalMoves.length < 1) {
+                if (this.isInCheck.white) checkmated.white = true;
+                else stalemated.white = true;
             }
+
+            // Black must have performed a legal move
             this.isInCheck.black = false;
         }
         else {
             this.isInCheck.black = isInCheck;
 
-            // If black is still in check and has no legal moves = white checkmate
-            if (this.isInCheck.black) {
-                let bKingPos = this.getPiecePos(Piece.types.king, Piece.sides.black)[0];
-                let bKing = this.tiles[bKingPos.y][bKingPos.x];
-                legalMoves = this.listMovesLegal(bKing, bKingPos);
-                if (legalMoves.length < 1) {
-                    checkmated.black = true;
-                    if (debug) console.log("WHITE CHECKMATE");
-                }
+            // If black has no legal moves = checkmate or stalemate
+            if (bLegalMoves.length < 1) {
+                if (this.isInCheck.black) checkmated.black = true;
+                else stalemated.black = true;
             }
+
+            // White must have performed a legal move
             this.isInCheck.white = false;
         }
 
@@ -207,6 +205,12 @@ class Board {
         }
         else if (checkmated.black) {
             algebraic += "# 1-0";
+        }
+        else if (stalemated.white) {
+            algebraic += " ½-½";
+        }
+        else if (stalemated.black) {
+
         }
         else if (isInCheck) {
             algebraic += "+";
@@ -229,6 +233,26 @@ class Board {
             }
         }
         return piecePositions;
+    }
+
+    listAllMovesLegal(side) {
+        let sz = this.style.size;
+        let moves = [];
+
+        for (let y = 0; y < sz; y++) {
+            for (let x = 0; x < sz; x++) {
+                let piece = this.tiles[y][x];
+                if (piece.type == Piece.types.empty) continue;
+                if (piece.side != side) continue;
+
+                moves = moves.concat(this.listMovesLegal(piece, { "x": x, "y": y }));
+            }
+        }
+
+        return moves.filter((e, i, s) => {
+            // Filter null and repeated elements
+            return i == s.indexOf(e);
+        });
     }
 
     listChecks(kingPos, side) {
@@ -359,7 +383,7 @@ class Board {
         if (piece.type == Piece.types.king) {
             kingPos = this.getPiecePos(Piece.types.king, piece.side)[0];
             // Queen side
-            let castlingAttacks = this.listChecks({ "x": kingPos.x - 1, "y": kingPos.y }, kingPiece.side);
+            let castlingAttacks = this.listChecks({ "x": 3, "y": kingPos.y }, kingPiece.side);
             if (castlingAttacks.length > 0) {
                 moves = moves.filter((e) => {
                     return e != kingPos.x - 2 + kingPos.y * sz;
@@ -367,7 +391,7 @@ class Board {
             }
 
             // King side
-            castlingAttacks = this.listChecks({ "x": kingPos.x + 1, "y": kingPos.y }, kingPiece.side);
+            castlingAttacks = this.listChecks({ "x": 5, "y": kingPos.y }, kingPiece.side);
             if (castlingAttacks.length > 0) {
                 moves = moves.filter((e) => {
                     return e != kingPos.x + 2 + kingPos.y * sz;
