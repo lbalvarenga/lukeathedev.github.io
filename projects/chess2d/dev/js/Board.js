@@ -50,6 +50,7 @@ class Board {
     }
 
     enPassantTarget = { "x": null, "y": null };
+    totalmoves = 0;
     halfmoves = 0;
     fullmoves = 1;
 
@@ -230,6 +231,7 @@ class Board {
             algebraic += "+";
         }
 
+        this.totalmoves++;
         return algebraic;
     }
 

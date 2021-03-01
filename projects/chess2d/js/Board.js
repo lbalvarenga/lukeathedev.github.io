@@ -56,6 +56,8 @@ class Board {
       "y": null
     });
 
+    _defineProperty(this, "totalmoves", 0);
+
     _defineProperty(this, "halfmoves", 0);
 
     _defineProperty(this, "fullmoves", 1);
@@ -226,6 +228,7 @@ class Board {
       algebraic += "+";
     }
 
+    this.totalmoves++;
     return algebraic;
   }
 

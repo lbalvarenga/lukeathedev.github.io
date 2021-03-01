@@ -1,6 +1,7 @@
 var debug = false;
 var board; var audio = [];
 var modalOpen = false;
+var curMove;
 
 // TODO: allow for drawable arrows in board
 // TODO: first piece audio sound is lower than normal
@@ -59,7 +60,9 @@ function preload() {
     // loadImage is async
     style.pieceSprite = loadImage("./media/pieces.png", () => {
         board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
+        curMove = board.fullmoves;
     });
+
 
     // Sounds
     // 0 for piece capture
@@ -79,7 +82,12 @@ function canvasPressed() {
 }
 
 function setup() {
-    let sz = Utils.getRes(1 / 1, 0.65);
+    let sz = Utils.getRes(1 / 1, 0.75);
+    let ctWidth = $("#canvasContainer").width();
+    if (sz.x > ctWidth) {
+        sz.x = ctWidth;
+        sz.y = ctWidth;
+    }
     let canvas = createCanvas(sz.x, sz.y);
     canvas.parent("#canvasContainer");
 
@@ -137,15 +145,15 @@ function draw() {
                 // color = x % 2 == 0 ? board.style.tileWhite : board.style.tileBlack;
                 // fill(color);
                 fill([0, 0, 0, 130]);
-                text(x+1, tileWidth * (x+1) - 0.115 * tileWidth, 8 * tileWidth - 0.05 * tileWidth);
+                let vert = "abcdefgh".charAt(x);
+                text(vert, tileWidth * (x + 1) - 0.115 * tileWidth, 8 * tileWidth - 0.05 * tileWidth);
             }
             if (x == 0) {
                 textSize(width * 0.02);
                 // color = y % 2 == 1 ? board.style.tileWhite : board.style.tileBlack;
                 // fill(color);
                 fill([0, 0, 0, 130]);
-                let vert = "abcdefgh".charAt(abs(y-7));
-                text(vert, 0.025 * tileWidth, y * tileWidth + 0.15 * tileWidth);
+                text(abs(y - 8), 0.025 * tileWidth, y * tileWidth + 0.15 * tileWidth);
             }
 
             if (piece.type != Piece.types.empty) {
@@ -306,14 +314,16 @@ function mouseReleased() {
 
                     moves = [];
 
-                    let moveContainer = document.getElementById("moveList");
+                    if (curMove == board.fullmoves) {
+                        $("#moveList tr:last").after("<tr><th scope=\"row\">" + curMove + "</th></tr>");
+                    }
 
                     // Current turn is not the previous turn (wow)
                     if (board.currentTurn == Piece.sides.black) {
-                        moveContainer.innerHTML += "<li class=\"list-group-item bg-dark\"><strong>" + move + "</strong></li>";
+                        $("#moveList th:last").after("<td>" + move + "</td>");
                     }
                     else {
-                        moveContainer.innerHTML += "<li class=\"list-group-item bg-dark\">" + move + "</li>";
+                        $("#moveList td:last").after("<td>" + move + "</td>");
                     }
 
                     if (debug) {
@@ -323,6 +333,7 @@ function mouseReleased() {
                         console.log(fenString);
                     }
 
+                    curMove = board.fullmoves;
                     return true;
                 }
                 return false;
@@ -349,6 +360,11 @@ function mouseReleased() {
 }
 
 function windowResized() {
-    let sz = Utils.getRes(1 / 1, 0.65);
+    let sz = Utils.getRes(1 / 1, 0.75);
+    let ctWidth = $("#canvasContainer").width();
+    if (sz.x > ctWidth) {
+        sz.x = ctWidth;
+        sz.y = ctWidth;
+    }
     resizeCanvas(sz.x, sz.y);
 }
