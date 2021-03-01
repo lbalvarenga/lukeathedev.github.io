@@ -2,6 +2,40 @@
 
 var debug = false;
 var board; // TODO: improve game appearance
+// TODO: allow for drawable arrows in board
+// This is so scuffed damn
+
+function getPromotionPiece(x) {
+  return new Promise(resolve => {
+    $("#promotionButton").on("click", () => {
+      let proPiece = $("#promotionChoices input:radio:checked").val();
+
+      switch (proPiece.toLowerCase()) {
+        case "q":
+          resolve(Piece.types.queen);
+
+        case "n":
+          resolve(Piece.types.knight);
+
+        case "r":
+          resolve(Piece.types.rook);
+
+        case "b":
+          resolve(Piece.types.bishop);
+      }
+
+      resolve(null);
+    });
+  });
+}
+
+async function promotionHandler() {
+  let promotionModal = new bootstrap.Modal(document.getElementById("promotionModal"), {
+    keyboard: false
+  });
+  promotionModal.show();
+  return await getPromotionPiece(231);
+}
 
 function preload() {
   let style = Board.style; // Light theme
@@ -12,7 +46,8 @@ function preload() {
   style.tileBlack = [77, 99, 106, 255];
   style.tileWhite = [94, 122, 130, 255]; // White at bottom
 
-  style.inverted = false; // loadImage is async
+  style.inverted = false;
+  style.boardRes = 4096; // loadImage is async
 
   style.pieceSprite = loadImage("./media/pieces.png", () => {
     board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
@@ -54,14 +89,11 @@ function draw() {
 
   if (board.isInCheck.white || board.isInCheck.black) {
     let side = board.currentTurn == Piece.sides.white ? Piece.sides.white : Piece.sides.black;
-    let kingPos = board.getPiecePos(Piece.types.king, side)[0]; //fill([150, 50, 0, 170]);
-
-    fill([0, 0, 0, 0]);
-    stroke([255, 40, 40, 255]);
-    strokeCap(ROUND);
-    strokeWeight(2);
-    square(kingPos.x * tileWidth + 4, kingPos.y * tileWidth + 4, tileWidth - 8); // let center = tileWidth / 2;
-    // circle(kingPos.x * tileWidth + center, kingPos.y * tileWidth + center, tileWidth);
+    let kingPos = board.getPiecePos(Piece.types.king, side)[0];
+    fill([255, 50, 0, 170]);
+    noStroke();
+    let center = tileWidth / 2;
+    circle(kingPos.x * tileWidth + center, kingPos.y * tileWidth + center, tileWidth - tileWidth / 10);
   }
 
   for (let y = 0; y < sz; y++) {
@@ -178,30 +210,30 @@ function mouseReleased() {
 
   function makeMove(src, dst) {
     if (src.x != dst.x || src.y != dst.y) {
-      let move = board.validateMove(src, dst);
+      board.validateMove(src, dst, promotionHandler).then(move => {
+        if (move) {
+          moves = [];
+          let moveContainer = document.getElementById("moveList"); // Current turn is not the previous turn (wow)
 
-      if (move) {
-        moves = [];
-        let moveContainer = document.getElementById("moveList"); // Current turn is not the previous turn (wow)
+          if (board.currentTurn == Piece.sides.black) {
+            moveContainer.innerHTML += "<li class=\"list-group-item bg-dark\"><strong>" + move + "</strong></li>";
+          } else {
+            moveContainer.innerHTML += "<li class=\"list-group-item bg-dark\">" + move + "</li>";
+          }
 
-        if (board.currentTurn == Piece.sides.black) {
-          moveContainer.innerHTML += "<li class=\"list-group-item\">" + move + "</li>";
-        } else {
-          moveContainer.innerHTML += "<li class=\"list-group-item\"><strong>" + move + "</strong></li>";
+          if (debug) {
+            // TODO: implement capturing and check notation
+            let fenString = board.writeFen();
+            console.log(move);
+            console.log(fenString);
+          }
+
+          return true;
         }
 
-        if (debug) {
-          // TODO: implement capturing and check notation
-          let fenString = board.writeFen();
-          console.log(move);
-          console.log(fenString);
-        }
-
-        return true;
-      }
+        return false;
+      });
     }
-
-    return false;
   }
 
   let hovering = {

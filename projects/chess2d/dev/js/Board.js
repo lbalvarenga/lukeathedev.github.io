@@ -44,6 +44,11 @@ class Board {
     };
     isStalemated = false;
 
+    capturedBy = {
+        "white": [],
+        "black": []
+    }
+
     enPassantTarget = { "x": null, "y": null };
     halfmoves = 0;
     fullmoves = 1;
@@ -62,7 +67,9 @@ class Board {
     // TODO: check for checkmates
     // TODO: implement promotion choice
     // Anything that affects pieces goes here
-    validateMove(src, dst) {
+    // hast to be async because of modal
+    // is this the best approach???
+    async validateMove(src, dst, promotionHandler) {
         let srcPiece = this.tiles[src.y][src.x];
         if (srcPiece.type == Piece.types.empty) return false;
 
@@ -71,7 +78,7 @@ class Board {
         let moves = this.listMovesLegal(srcPiece, src);
         let capture = false;
         let enPassantSet = false;
-        let promotion = false;
+        let promotion = { "piece": null }
         let checkmated = { "black": false, "white": false };
         let stalemated = false;
 
@@ -114,9 +121,12 @@ class Board {
 
                 // Since pawns can't go backwards
                 if (dst.y == 0 || dst.y == 7) {
-                    this.tiles[dst.y][dst.x] = new Piece(Piece.types.queen, srcPiece.side, this.style.pieceSprite);
+                    // not really the best approach i dont think
+                    let proPieceType = await promotionHandler();
+
+                    this.tiles[dst.y][dst.x] = new Piece(proPieceType, srcPiece.side, this.style.pieceSprite);
                     this.tiles[src.y][src.x] = new Piece(Piece.types.empty, null, null);
-                    promotion = true;
+                    promotion.piece = new Piece(proPieceType, null, this.style.pieceSprite).shorthand;
                 }
 
                 this.halfmoves = 0;
@@ -202,23 +212,19 @@ class Board {
 
         let algebraic = Utils.toAlgebraic(srcPiece, src, dst, capture);
 
-        if (promotion) {
-            // TODO: implement different pieces
-            if (srcPiece.side == Piece.sides.white) algebraic += "Q";
-            else algebraic += "q";
+        if (promotion.piece != null) {
+            if (srcPiece.side == Piece.sides.white) algebraic += promotion.piece.toUpperCase();
+            else algebraic += promotion.piece.toLowerCase();
         }
 
-        if (checkmated.white) {
+        if (this.isCheckmated.white) {
             algebraic += "# 0-1";
         }
-        else if (checkmated.black) {
+        else if (this.isCheckmated.black) {
             algebraic += "# 1-0";
         }
-        else if (stalemated.white) {
+        else if (this.isStalemated) {
             algebraic += " ½-½";
-        }
-        else if (stalemated.black) {
-
         }
         else if (isInCheck) {
             algebraic += "+";
@@ -393,7 +399,7 @@ class Board {
         // Check intermediary castling square for attacks
         if (piece.type == Piece.types.king) {
             kingPos = this.getPiecePos(Piece.types.king, piece.side)[0];
-            
+
             // Queen side
             let castlingAttacks = this.listChecks({ "x": 3, "y": kingPos.y }, piece.side);
             if (castlingAttacks.length > 0) {

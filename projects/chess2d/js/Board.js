@@ -46,6 +46,11 @@ class Board {
 
     _defineProperty(this, "isStalemated", false);
 
+    _defineProperty(this, "capturedBy", {
+      "white": [],
+      "black": []
+    });
+
     _defineProperty(this, "enPassantTarget", {
       "x": null,
       "y": null
@@ -65,9 +70,11 @@ class Board {
   } // TODO: check for checkmates
   // TODO: implement promotion choice
   // Anything that affects pieces goes here
+  // hast to be async because of modal
+  // is this the best approach???
 
 
-  validateMove(src, dst) {
+  async validateMove(src, dst, promotionHandler) {
     let srcPiece = this.tiles[src.y][src.x];
     if (srcPiece.type == Piece.types.empty) return false;
     let dstPiece = this.tiles[dst.y][dst.x];
@@ -75,7 +82,9 @@ class Board {
     let moves = this.listMovesLegal(srcPiece, src);
     let capture = false;
     let enPassantSet = false;
-    let promotion = false;
+    let promotion = {
+      "piece": null
+    };
     let checkmated = {
       "black": false,
       "white": false
@@ -117,9 +126,11 @@ class Board {
 
 
         if (dst.y == 0 || dst.y == 7) {
-          this.tiles[dst.y][dst.x] = new Piece(Piece.types.queen, srcPiece.side, this.style.pieceSprite);
+          // not really the best approach i dont think
+          let proPieceType = await promotionHandler();
+          this.tiles[dst.y][dst.x] = new Piece(proPieceType, srcPiece.side, this.style.pieceSprite);
           this.tiles[src.y][src.x] = new Piece(Piece.types.empty, null, null);
-          promotion = true;
+          promotion.piece = new Piece(proPieceType, null, this.style.pieceSprite).shorthand;
         }
 
         this.halfmoves = 0;
@@ -201,18 +212,17 @@ class Board {
 
     let algebraic = Utils.toAlgebraic(srcPiece, src, dst, capture);
 
-    if (promotion) {
-      // TODO: implement different pieces
-      if (srcPiece.side == Piece.sides.white) algebraic += "Q";else algebraic += "q";
+    if (promotion.piece != null) {
+      if (srcPiece.side == Piece.sides.white) algebraic += promotion.piece.toUpperCase();else algebraic += promotion.piece.toLowerCase();
     }
 
-    if (checkmated.white) {
+    if (this.isCheckmated.white) {
       algebraic += "# 0-1";
-    } else if (checkmated.black) {
+    } else if (this.isCheckmated.black) {
       algebraic += "# 1-0";
-    } else if (stalemated.white) {
+    } else if (this.isStalemated) {
       algebraic += " ½-½";
-    } else if (stalemated.black) {} else if (isInCheck) {
+    } else if (isInCheck) {
       algebraic += "+";
     }
 
