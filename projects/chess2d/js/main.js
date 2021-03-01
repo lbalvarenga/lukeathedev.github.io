@@ -1,11 +1,13 @@
 "use strict";
 
 var debug = false;
-var board; // TODO: improve game appearance
-// TODO: allow for drawable arrows in board
+var board;
+var audio = [];
+var modalOpen = false; // TODO: allow for drawable arrows in board
+// TODO: first piece audio sound is lower than normal
 // This is so scuffed damn
 
-function getPromotionPiece(x) {
+function getPromotionPiece() {
   return new Promise(resolve => {
     $("#promotionButton").on("click", () => {
       let proPiece = $("#promotionChoices input:radio:checked").val();
@@ -31,10 +33,14 @@ function getPromotionPiece(x) {
 
 async function promotionHandler() {
   let promotionModal = new bootstrap.Modal(document.getElementById("promotionModal"), {
-    keyboard: false
+    keyboard: false,
+    backdrop: "static"
   });
   promotionModal.show();
-  return await getPromotionPiece(231);
+  modalOpen = true;
+  let p = await getPromotionPiece();
+  modalOpen = false;
+  return p;
 }
 
 function preload() {
@@ -51,7 +57,22 @@ function preload() {
 
   style.pieceSprite = loadImage("./media/pieces.png", () => {
     board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", style);
-  });
+  }); // Sounds
+  // 0 for piece capture
+  // 1 for check
+  // 2 for game over
+
+  audio[0] = loadSound("./media/move_success.wav");
+  audio[1] = loadSound("./media/piece_check.wav");
+  audio[2] = loadSound("./media/game_over.wav");
+
+  for (const file of audio) {
+    file.setVolume(1.0);
+  }
+}
+
+function canvasPressed() {
+  getAudioContext().resume();
 }
 
 function setup() {
@@ -102,9 +123,43 @@ function draw() {
         "x": x * width / sz,
         "y": y * height / sz
       };
-      let piece = board.tiles[y][x];
+      let piece = board.tiles[y][x]; // let color;
+      // Drawing text every frame might be a bit too inefficient...
+
+      if (y == 7) {
+        textSize(width * 0.02); // color = x % 2 == 0 ? board.style.tileWhite : board.style.tileBlack;
+        // fill(color);
+
+        fill([0, 0, 0, 130]);
+        text(x + 1, tileWidth * (x + 1) - 0.115 * tileWidth, 8 * tileWidth - 0.05 * tileWidth);
+      }
+
+      if (x == 0) {
+        textSize(width * 0.02); // color = y % 2 == 1 ? board.style.tileWhite : board.style.tileBlack;
+        // fill(color);
+
+        fill([0, 0, 0, 130]);
+        let vert = "abcdefgh".charAt(abs(y - 7));
+        text(vert, 0.025 * tileWidth, y * tileWidth + 0.15 * tileWidth);
+      }
 
       if (piece.type != Piece.types.empty) {
+        if (selected.piece != null) {
+          if (selected.piece.type == Piece.types.king) {
+            if (board.isCheckmated.white) {
+              if (selected.piece.side == Piece.sides.white) {
+                image(piece.image, pos.x, pos.y, tileWidth, tileWidth);
+              }
+            }
+
+            if (board.isCheckmated.black) {
+              if (selected.piece.side == Piece.sides.black) {
+                image(piece.image, pos.x, pos.y, tileWidth, tileWidth);
+              }
+            }
+          }
+        }
+
         if (piece != selected.piece) {
           image(piece.image, pos.x, pos.y, tileWidth, tileWidth);
         }
@@ -149,6 +204,20 @@ function draw() {
   }
 
   if (mouse.down && selected.piece.type != Piece.types.empty) {
+    if (selected.piece.type == Piece.types.king) {
+      if (board.isCheckmated.white) {
+        if (selected.piece.side == Piece.sides.white) {
+          return;
+        }
+      }
+
+      if (board.isCheckmated.black) {
+        if (selected.piece.side == Piece.sides.black) {
+          return;
+        }
+      }
+    }
+
     imageMode(CENTER);
     image(selected.piece.image, mouseX, mouseY, tileWidth, tileWidth);
     imageMode(CORNER);
@@ -158,7 +227,8 @@ function draw() {
 function mousePressed() {
   // For debouncing
   // if (event.type != "touchstart") return true;
-  // Check screen bounds
+  if (modalOpen) return; // Check screen bounds
+
   if (mouseX > width || mouseY > height) return true;
   if (mouseX < 0 || mouseY < 0) return true;
   mouse.down = true;
@@ -193,7 +263,8 @@ function mousePressed() {
 function mouseReleased() {
   // For debouncing
   // if (event.type != "touchend") return true;
-  // Check screen bounds
+  if (modalOpen) return; // Check screen bounds
+
   if (mouseX > width || mouseY > height) {
     mouse.down = false;
     selected.piece = null;
@@ -212,6 +283,14 @@ function mouseReleased() {
     if (src.x != dst.x || src.y != dst.y) {
       board.validateMove(src, dst, promotionHandler).then(move => {
         if (move) {
+          audio[0].play();
+
+          if (board.isCheckmated.white || board.isCheckmated.black) {
+            audio[2].play();
+          } else if (board.isInCheck.white || board.isInCheck.black) {
+            audio[1].play();
+          }
+
           moves = [];
           let moveContainer = document.getElementById("moveList"); // Current turn is not the previous turn (wow)
 
